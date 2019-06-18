@@ -1,0 +1,5 @@
+/target/
+/session*/
+/logs/
+sess*.cfg
+conexion.info
