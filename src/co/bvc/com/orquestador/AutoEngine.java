@@ -24,15 +24,15 @@ public class AutoEngine {
 
 	CreateMessage createMesage = new CreateMessage();
 
-	
+	// metodo que inicia la ejecucion
+	public void iniciarEjecucion()
+			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 
-	
+		BasicFunctions.createConn();
+		BasicFunctions.startVariables();
+		BasicFunctions.createLogin();
 
-	
-
-	
-
-	
+	}
 
 	// Metodo que guarda el registro en base de datos
 	public void cargarCache(AutFixRfqDatosCache datosCache) throws SQLException, InterruptedException {
@@ -56,23 +56,11 @@ public class AutoEngine {
 
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-
 	public static void printMessage(String typeMsg, SessionID sessionId, Message message) throws FieldNotFound {
 		System.out.println("********************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sessionId
 				+ "\nMENSAJE :" + message + "\n----------------------------");
 
 	}
-
-	
 
 	public void ejecutarSiguienteEscenario()
 			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
@@ -92,5 +80,4 @@ public class AutoEngine {
 //		}
 	}
 
-	
 }
