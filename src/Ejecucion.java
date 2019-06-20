@@ -6,7 +6,7 @@ import co.bvc.com.orquestador.AutoEngine;
 import quickfix.FieldNotFound;
 import quickfix.SessionNotFound;
 
-public class TestFix {
+public class Ejecucion {
 
 	public static void main(String[] args) throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 		int escenarioEjecucion = 0;

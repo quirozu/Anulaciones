@@ -24,16 +24,6 @@ public class AutoEngine {
 
 	CreateMessage createMesage = new CreateMessage();
 
-	
-
-	
-
-	
-
-	
-
-	
-
 	// Metodo que guarda el registro en base de datos
 	public void cargarCache(AutFixRfqDatosCache datosCache) throws SQLException, InterruptedException {
 		DataAccess.cargarCache(datosCache);
@@ -56,16 +46,6 @@ public class AutoEngine {
 
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-
 	public static void printMessage(String typeMsg, SessionID sessionId, Message message) throws FieldNotFound {
 		System.out.println("********************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sessionId
 				+ "\nMENSAJE :" + message + "\n----------------------------");
@@ -77,19 +57,6 @@ public class AutoEngine {
 	public void ejecutarSiguienteEscenario()
 			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 
-//		int sec = BasicFunctions.getIdCase();
-//		sec = sec + 1;
-//		System.out.println("+++++++++++++++++ " + sec);
-//		String query = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos" + " WHERE ID_CASE= " + sec
-//				+ " ORDER BY ID_CASESEQ ASC LIMIT 1;";
-//		System.out.println(query);
-//		ResultSet resultset = DataAccess.getQuery(query);
-//		while (resultset.next()) {
-//			int cas = resultset.getInt("ID_CASESEQ");
-//			System.out.println("+++++++++++++++++++++++++++++++ " + cas);
-//			BasicFunctions.setIdCaseSeq(cas);
-//			ejecutarSiguientePaso();
-//		}
 	}
 
 	
