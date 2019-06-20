@@ -59,7 +59,7 @@ public class DataAccess {
 
 	public static int getFirstIdCaseSeq(int escenarioEjecucion) throws SQLException {
 
-		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_rfq_datos" + " WHERE ID_CASE= "
+		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_tcr_datos" + " WHERE ID_CASE= "
 				+ escenarioEjecucion + " ORDER BY ID_CASESEQ ASC LIMIT 1";
 		
 		ResultSet rs = DataAccess.getQuery(queryInicio);
@@ -77,7 +77,7 @@ public class DataAccess {
 
 	public static ResultSet datosMensaje(int idCaseSeq) throws SQLException {
 
-		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos WHERE ID_CASESEQ=" + idCaseSeq;
+		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
 
 		return rsDatos;
