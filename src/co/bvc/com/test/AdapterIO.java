@@ -46,12 +46,8 @@ public class AdapterIO extends MessageCracker implements Application {
 	@Override
 	public void toAdmin(Message message, SessionID sessionId) throws FieldException {
 
-		try {
-			printMessage("toAdmin - ENTRADA", sessionId, message);
-		} catch (FieldNotFound e1) {
-			e1.printStackTrace();
-		}
-		System.out.println("*****************\ntoAdmin - ENTRADA");
+		
+//		System.out.println("*****************\ntoAdmin - ENTRADA");
 
 		if (message instanceof Logon) {
 			try {
@@ -65,7 +61,6 @@ public class AdapterIO extends MessageCracker implements Application {
 						+ " FROM bvc_automation_db.AUT_USUARIO A INNER JOIN bvc_automation_db.aut_fix_rfq_aux_con B "
 						+ " ON A.ID_USUARIO = B.ID_USUARIO WHERE A.ESTADO = 'A' AND A.PERFIL_USUARIO = 'FIXCONNECTOR';";
 
-				System.out.println(queryDatosTrader);
 
 				ResultSet resultSet = DataAccess.getQuery(queryDatosTrader);
 
@@ -82,11 +77,6 @@ public class AdapterIO extends MessageCracker implements Application {
 				e.printStackTrace();
 			}
 
-//			message.setField(new PossDupFlag(true));
-
-		
-		
-
 			try {
 				crack(message, sessionId);
 			} catch (UnsupportedMessageType e) {
@@ -97,8 +87,8 @@ public class AdapterIO extends MessageCracker implements Application {
 				e.printStackTrace();
 			}
 
-			System.out.println(
-					"*****************\n toAdmin - SALIDA : \n" + message + "\nPara la sessionId: " + sessionId);
+//			System.out.println(
+//					"*****************\n toAdmin - SALIDA : \n" + message + "\nPara la sessionId: " + sessionId);
 		}
 
 	}
@@ -106,23 +96,12 @@ public class AdapterIO extends MessageCracker implements Application {
 	@Override
 	public void toApp(Message message, SessionID sessionId) throws DoNotSend, FieldException {
 
-		try {
-			printMessage("toApp", sessionId, message);
-		} catch (FieldNotFound e1) {
-			e1.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
 	public void fromAdmin(Message message, SessionID sessionId)
 			throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon, FieldException {
 
-		printMessage("fromAdmin-Input", sessionId, message);
-
-		
 			try {
 				crack(message, sessionId);
 			} catch (UnsupportedMessageType e) {
@@ -133,8 +112,8 @@ public class AdapterIO extends MessageCracker implements Application {
 				e.printStackTrace();
 			}
 
-			System.out.println(
-					"*****************\n toAdmin - SALIDA : \n" + message + "\nPara la sessionId: " + sessionId);
+//			System.out.println(
+//					"*****************\n toAdmin - SALIDA : \n" + message + "\nPara la sessionId: " + sessionId);
 	}
 
 	@Override
