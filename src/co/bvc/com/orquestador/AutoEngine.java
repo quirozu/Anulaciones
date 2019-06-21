@@ -48,15 +48,46 @@ public class AutoEngine {
 
 	// Metodo que elimina el registro en cache (base de datos)
 	
-	public void enviarMensaje(ResultSet resultSet) {
+	public void enviarMensaje(ResultSet resultSet) throws SQLException, FieldNotFound {
 		
+		String msgType = resultSet.getString("ID_ESCENARIO");
+		String idAfiliado = resultSet.getString("ID_AFILIADO");
+		System.out.println(resultSet.toString());
+		
+		AutFixRfqDatosCache datosCache = new AutFixRfqDatosCache();
+		RespuestaConstrucccionMsgFIX respConstruccion = new RespuestaConstrucccionMsgFIX();
+
+		System.out.println("*********************\n" + msgType + "\n*********************");
+		switch (msgType) {
+
+		case "FIX_AE":
+			
+			System.out.println("*********************");
+			System.out.println("** INGRESA A FIX_EA **");
+			System.out.println("*********************");
+
+			respConstruccion = createMesage.createAE(resultSet);
+			System.out.println("INGRESA A AE ---- EMPEZAR A CREAR MENSAJE DE EA");
+			
+			
+			break;
+		
+		case "FIX_AR":
+			
+			System.out.println("INGRESA A AE ---- EMPEZAR A CREAR MENSAJE DE EA");
+			
+			break;
+			
+		default:
+			break;
+		}
 		
 		
 	}
 	
 	public void eliminarDatoCache(String session) throws SQLException, InterruptedException {
 
-		String queryDelete = "DELETE FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = " + "'" + session
+		String queryDelete = "DELETE FROM bvc_automation_db.aut_fix_tcr_datos WHERE RECEIVER_SESSION = " + "'" + session
 				+ "'" + ";";
 
 		DataAccess.setQuery(queryDelete);
