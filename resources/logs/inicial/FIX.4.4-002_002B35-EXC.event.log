@@ -98,3 +98,53 @@
 20190621-16:29:19: Initiated logon request
 20190621-16:29:19: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
 20190621-16:29:19: Received logon
+20190625-14:28:24: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-14:28:24: Session state is not current; resetting FIX.4.4:002/002B35->EXC
+20190625-14:28:24: Created session: FIX.4.4:002/002B35->EXC
+20190625-14:28:24: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-14:28:24: MINA session created: local=/172.16.0.229:59402, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-14:28:26: Initiated logon request
+20190625-14:28:26: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-14:28:26: Received logon
+20190625-14:51:24: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-14:51:24: Created session: FIX.4.4:002/002B35->EXC
+20190625-14:51:24: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-14:51:24: MINA session created: local=/172.16.0.229:59966, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-14:51:25: Initiated logon request
+20190625-14:51:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-14:51:25: Received logon
+20190625-19:44:13: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-19:44:13: Created session: FIX.4.4:002/002B35->EXC
+20190625-19:44:13: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-19:44:13: MINA session created: local=/172.16.0.229:54383, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-19:44:14: Initiated logon request
+20190625-19:44:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-19:44:15: Received logon
+20190625-19:45:33: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-19:45:33: Created session: FIX.4.4:002/002B35->EXC
+20190625-19:45:33: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-19:45:33: MINA session created: local=/172.16.0.229:54506, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-19:45:35: Initiated logon request
+20190625-19:45:35: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-19:45:35: Received logon
+20190625-19:54:22: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-19:54:22: Created session: FIX.4.4:002/002B35->EXC
+20190625-19:54:22: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-19:54:22: MINA session created: local=/172.16.0.229:54743, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-19:54:23: Initiated logon request
+20190625-19:54:23: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-19:54:23: Received logon
+20190625-19:55:22: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-19:55:22: Created session: FIX.4.4:002/002B35->EXC
+20190625-19:55:22: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-19:55:22: MINA session created: local=/172.16.0.229:54854, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-19:55:23: Initiated logon request
+20190625-19:55:23: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-19:55:23: Received logon
+20190625-20:02:35: Session FIX.4.4:002/002B35->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190625-20:02:35: Created session: FIX.4.4:002/002B35->EXC
+20190625-20:02:35: Configured socket addresses for session: [/172.36.2.13:54402]
+20190625-20:02:35: MINA session created: local=/172.16.0.229:55113, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54402
+20190625-20:02:36: Initiated logon request
+20190625-20:02:36: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190625-20:02:36: Received logon

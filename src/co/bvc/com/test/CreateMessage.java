@@ -1,5 +1,6 @@
 package co.bvc.com.test;
 
+import java.awt.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,27 +12,15 @@ import co.bvc.com.basicfix.Constantes;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
-import quickfix.StringField;
 import quickfix.field.BeginString;
-import quickfix.field.LastQty;
 import quickfix.field.NoPartyIDs;
-import quickfix.field.OrderQty;
 import quickfix.field.PartyID;
 import quickfix.field.PartyIDSource;
 import quickfix.field.PartyRole;
-import quickfix.field.QuoteReqID;
-import quickfix.field.SecurityIDSource;
-import quickfix.field.SecuritySubType;
-import quickfix.field.Side;
-import quickfix.field.Symbol;
-import quickfix.field.TradeReportID;
-import quickfix.field.TradeReportType;
-import quickfix.field.TradeRequestID;
-import quickfix.field.TradeRequestResult;
-import quickfix.field.TradeRequestStatus;
 import quickfix.fix44.QuoteRequest;
 import quickfix.fix44.TradeCaptureReport;
 import quickfix.fix44.Message.Header;
+import quickfix.fix44.QuoteCancel;
 
 public class CreateMessage {
 
@@ -54,32 +43,57 @@ public class CreateMessage {
 			resultSetParties = DataAccess.getQuery(queryParties);
 			
 			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
+			
+//			TradeReportID tradeRepID = new TradeReportID(strTradeRepId);
+//			ExecID execId = new ExecID();
+//			TradeReportType tradeReportType = new TradeReportType();
+//			TradeReportTransType tradeReportTransType = new TradeReportTransType();
+//			TrdType trdType = new TrdType(resultSet.getInt("AE_TRDTYPE"));
+//			ExecType execType = new ExecType();
+//			TradeReportRefID tradeReportRefID = new TradeReportRefID();
+//			MatchStatus matchStatus = new MatchStatus();
+//			MatchType matchType = new MatchType();
+//			
+			
+//			QuoteCancel quoteCancel = new QuoteCancel();
+//			
+//			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
+////			quoteCancel.set(symbol);
+//			quoteCancel.setField(new TrdType(resultSet.getInt("AE_TRDTYPE")));
+//			quoteCancel.isSetField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+//			quoteCancel.setField(new StringField(54, resultSet.getString("AE_SIDE")));
+//			quoteCancel.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+			
+			
+			
+			
 //			TradeCaptureReport trc = new TradeCaptureReport(strQuoteReqId);
 			
 //			QuoteReqID quoteReqID = new QuoteReqID(strQuoteReqId); // 131
 //			QuoteRequest quoteRequest = new QuoteRequest(quoteReqID); // 35 --> R
 			
-//			TradeReportID tradeRepID = new TradeReportID(strTradeRepId);
+			
 			TradeCaptureReport trc = new TradeCaptureReport();
 //			TradeRequestID trc = new TradeRequestID(strTradeRepId);
 			Header header = (Header) trc.getHeader();
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
 			
 			
-			
 			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
 
-//			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol("TFIT19PEDRO") :  new Symbol(resultSet.getString("AE_SYMBOL"));
+//			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
 //			noRelatedSym.set(symbol);
 //			noRelatedSym.setField(new SecurityIDSource("M"));
 //			noRelatedSym.isSetField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
 //			noRelatedSym.setField(new Side());
-////			noRelatedSym.setField(new StringField(54, resultSet.getString("AE_SIDE")));
+//			noRelatedSym.setField(new StringField(54, resultSet.getString("AE_SIDE")));
 //			noRelatedSym.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
 //			noRelatedSym.setField(new NoPartyIDs());
 
 			
-			QuoteRequest.NoRelatedSym.NoPartyIDs parte = new QuoteRequest.NoRelatedSym.NoPartyIDs();
+			
+			QuoteCancel.NoPartyIDs parte =  new QuoteCancel.NoPartyIDs();
+//			QuoteRequest.NoRelatedSym.NoPartyIDs parte = new QuoteRequest.NoRelatedSym.NoPartyIDs();
 
 			List<String> list = new ArrayList<String>();
 			String idAfiliado = resultSet.getString("ID_AFILIADO");
@@ -92,12 +106,12 @@ public class CreateMessage {
 				}
 
 				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
-//				parte.set(new PartyIDSource("RQ_PARTYIDSOURCE"));
-//				parte.setField(new StringField(448, resultSet.getString("RQ_PARTYIDSOURCE")));
+				parte.set(new PartyIDSource('C'));
 				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
 
 				noRelatedSym.addGroup(parte);
 			}
+			
 			if (noRelatedSym.getInt(NoPartyIDs.FIELD) == 1) {
 				System.out.println("\n\nPARA TODO EL MERCADO.....\n");
 				BasicFunctions.setAllMarket(true);
