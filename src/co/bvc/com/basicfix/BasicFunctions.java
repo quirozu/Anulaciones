@@ -25,8 +25,26 @@ public class BasicFunctions {
 	private static String receptor;
 	private static boolean allMarket = false;
 	private static String TrdMatchID;
+	private static int lastPx;
+	private static int lastQTy;
 	
 //	private static RespuestaConstrucccionMsgFIX cache;
+	
+	public static int getLastPx() {
+		return lastPx;
+	}
+
+	public static void setLastPx(int lastPx) {
+		BasicFunctions.lastPx = lastPx;
+	}
+
+	public static int getLastQTy() {
+		return lastQTy;
+	}
+
+	public static void setLastQTy(int lastQTy) {
+		BasicFunctions.lastQTy = lastQTy;
+	}	
 	
 	public static String getTrdMatchID() {
 		return TrdMatchID;

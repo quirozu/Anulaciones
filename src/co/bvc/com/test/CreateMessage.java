@@ -14,9 +14,16 @@ import co.bvc.com.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
 import quickfix.field.BeginString;
 import quickfix.field.NoPartyIDs;
+import quickfix.field.NoSides;
 import quickfix.field.PartyID;
 import quickfix.field.PartyIDSource;
 import quickfix.field.PartyRole;
+import quickfix.field.SecuritySubType;
+import quickfix.field.Side;
+import quickfix.field.Symbol;
+import quickfix.field.TradeReportID;
+import quickfix.field.TradeReportTransType;
+import quickfix.field.TradeReportType;
 import quickfix.fix44.QuoteRequest;
 import quickfix.fix44.TradeCaptureReport;
 import quickfix.fix44.Message.Header;
@@ -43,45 +50,32 @@ public class CreateMessage {
 			resultSetParties = DataAccess.getQuery(queryParties);
 			
 			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
-			
-//			TradeReportID tradeRepID = new TradeReportID(strTradeRepId);
-//			ExecID execId = new ExecID();
-//			TradeReportType tradeReportType = new TradeReportType();
-//			TradeReportTransType tradeReportTransType = new TradeReportTransType();
-//			TrdType trdType = new TrdType(resultSet.getInt("AE_TRDTYPE"));
-//			ExecType execType = new ExecType();
-//			TradeReportRefID tradeReportRefID = new TradeReportRefID();
-//			MatchStatus matchStatus = new MatchStatus();
-//			MatchType matchType = new MatchType();
-//			
-			
-//			QuoteCancel quoteCancel = new QuoteCancel();
-//			
-//			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
-////			quoteCancel.set(symbol);
-//			quoteCancel.setField(new TrdType(resultSet.getInt("AE_TRDTYPE")));
-//			quoteCancel.isSetField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
-//			quoteCancel.setField(new StringField(54, resultSet.getString("AE_SIDE")));
-//			quoteCancel.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
-			
-			
-			
-			
-//			TradeCaptureReport trc = new TradeCaptureReport(strQuoteReqId);
-			
-//			QuoteReqID quoteReqID = new QuoteReqID(strQuoteReqId); // 131
-//			QuoteRequest quoteRequest = new QuoteRequest(quoteReqID); // 35 --> R
-			
-			
+			System.out.println("1");
+			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+			System.out.println("2");
 			TradeCaptureReport trc = new TradeCaptureReport();
-//			TradeRequestID trc = new TradeRequestID(strTradeRepId);
+			System.out.println("3");
+			trc.setField(tradeReportID);	
+			System.out.println("4");
 			Header header = (Header) trc.getHeader();
+			System.out.println("5");
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
-			
-			
+			System.out.println("6");
+			trc.setField(new TradeReportTransType(0));
+			System.out.println("7");
+			trc.setField(new TradeReportType(96));
+			System.out.println("8");
+			trc.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
+			System.out.println("9");
+			trc.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+			System.out.println("10");
+			trc.setField(new NoSides(resultSet.getInt("AE_NOSIDES")));
+//			trc.setField(new Side(resultSet.getString("AE_SIDE")));
+		
+
 			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
 
-//			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
+			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
 //			noRelatedSym.set(symbol);
 //			noRelatedSym.setField(new SecurityIDSource("M"));
 //			noRelatedSym.isSetField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
