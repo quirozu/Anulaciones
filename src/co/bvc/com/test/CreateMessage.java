@@ -1,6 +1,5 @@
 package co.bvc.com.test;
 
-import java.awt.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,25 +49,15 @@ public class CreateMessage {
 			resultSetParties = DataAccess.getQuery(queryParties);
 			
 			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
-			System.out.println("1");
 			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
-			System.out.println("2");
 			TradeCaptureReport trc = new TradeCaptureReport();
-			System.out.println("3");
 			trc.setField(tradeReportID);	
-			System.out.println("4");
 			Header header = (Header) trc.getHeader();
-			System.out.println("5");
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
-			System.out.println("6");
 			trc.setField(new TradeReportTransType(0));
-			System.out.println("7");
 			trc.setField(new TradeReportType(96));
-			System.out.println("8");
 			trc.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
-			System.out.println("9");
 			trc.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
-			System.out.println("10");
 			trc.setField(new NoSides(resultSet.getInt("AE_NOSIDES")));
 //			trc.setField(new Side(resultSet.getString("AE_SIDE")));
 		

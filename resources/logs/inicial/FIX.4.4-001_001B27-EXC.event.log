@@ -255,3 +255,76 @@
 20190626-21:25:26: Initiated logon request
 20190626-21:25:26: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
 20190626-21:25:26: Received logon
+20190626-21:35:16: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190626-21:35:16: Created session: FIX.4.4:001/001B27->EXC
+20190626-21:35:16: Configured socket addresses for session: [/172.36.2.13:54401]
+20190626-21:35:16: MINA session created: local=/10.73.38.66:56631, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190626-21:35:17: Initiated logon request
+20190626-21:35:17: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190626-21:35:17: Received logon
+20190626-21:55:40: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190626-21:55:40: Created session: FIX.4.4:001/001B27->EXC
+20190626-21:55:40: Configured socket addresses for session: [/172.36.2.13:54401]
+20190626-21:55:40: MINA session created: local=/10.73.38.66:57928, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190626-21:55:41: Initiated logon request
+20190626-21:55:41: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190626-21:55:41: Received logon
+20190626-21:56:26: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190626-21:56:26: Created session: FIX.4.4:001/001B27->EXC
+20190626-21:56:27: Configured socket addresses for session: [/172.36.2.13:54401]
+20190626-21:56:27: MINA session created: local=/10.73.38.66:58070, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190626-21:56:28: Initiated logon request
+20190626-21:56:28: Disconnecting: Encountered END_OF_STREAM
+20190626-21:56:28: Received logon
+20190626-22:01:38: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190626-22:01:38: Created session: FIX.4.4:001/001B27->EXC
+20190626-22:01:38: Configured socket addresses for session: [/172.36.2.13:54401]
+20190626-22:01:38: MINA session created: local=/10.73.38.66:55661, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190626-22:01:39: Initiated logon request
+20190626-22:01:39: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190626-22:01:39: Received logon
+20190626-22:02:07: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190626-22:02:07: Created session: FIX.4.4:001/001B27->EXC
+20190626-22:02:07: Configured socket addresses for session: [/172.36.2.13:54401]
+20190626-22:02:07: MINA session created: local=/10.73.38.66:55785, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190626-22:02:08: Initiated logon request
+20190626-22:02:08: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190626-22:02:08: Received logon
+20190627-19:53:13: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190627-19:53:13: Session state is not current; resetting FIX.4.4:001/001B27->EXC
+20190627-19:53:13: Created session: FIX.4.4:001/001B27->EXC
+20190627-19:53:13: Configured socket addresses for session: [/172.36.2.13:54401]
+20190627-19:53:15: Pending connection not established after 2007 ms.
+20190627-19:53:16: MINA session created: local=/10.73.38.66:50886, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190627-19:53:39: Application exception in toAdmin()
+java.lang.NullPointerException
+	at co.bvc.com.test.AdapterIO.toAdmin(AdapterIO.java:67)
+	at quickfix.Session.sendRaw(Session.java:2528)
+	at quickfix.Session.generateLogon(Session.java:1989)
+	at quickfix.Session.next(Session.java:1889)
+	at quickfix.mina.SessionConnector$SessionTimerTask.run(SessionConnector.java:329)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+
+20190627-19:53:39: Initiated logon request
+20190627-19:53:39: Disconnecting: Timed out waiting for logon response
+20190627-19:54:04: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190627-19:54:04: Created session: FIX.4.4:001/001B27->EXC
+20190627-19:54:04: Configured socket addresses for session: [/172.36.2.13:54401]
+20190627-19:54:04: MINA session created: local=/10.73.38.66:51064, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190627-19:54:05: Initiated logon request
+20190627-19:54:05: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190627-19:54:05: Received logon
+20190628-14:45:13: Session FIX.4.4:001/001B27->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190628-14:45:13: Session state is not current; resetting FIX.4.4:001/001B27->EXC
+20190628-14:45:13: Created session: FIX.4.4:001/001B27->EXC
+20190628-14:45:13: Configured socket addresses for session: [/172.36.2.13:54401]
+20190628-14:45:14: MINA session created: local=/10.73.38.67:61756, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.13:54401
+20190628-14:45:15: Initiated logon request
+20190628-14:45:15: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190628-14:45:15: Received logon
