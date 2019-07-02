@@ -373,16 +373,15 @@
       <component name="YieldData" required="N"/>
 	 -->
     </message>
-  <message name="QuoteRequestReject" msgtype="AG" msgcat="app">
-     <field name="QuoteReqID" required="Y"/>
-     <field name="QuoteRequestRejectReason" required="Y"/>
-	 <group name="NoRelatedSym" required="Y">
-		<component name="Instrument" required="Y"/>
-		<field name="OrderQty" required="N"/>
-	 </group>
-	 
-	 <field name="Text" required="N"/>
-  </message>
+    <message name="QuoteRequestReject" msgtype="AG" msgcat="app">
+      <field name="QuoteReqID" required="Y"/>
+      <field name="QuoteRequestRejectReason" required="Y"/>
+	    <group name="NoRelatedSym" required="Y">
+			<component name="Instrument" required="Y"/>
+			<field name="OrderQty" required="N"/>
+		</group>
+	  <field name="Text" required="N"/>
+    </message>
     <message name="RFQRequest" msgtype="AH" msgcat="app">
       <field name="RFQReqID" required="Y"/>
       <group name="NoRelatedSym" required="Y">
@@ -1117,6 +1116,7 @@
     <field name="ProcessCode" required="N"/>
     <component name="Instrument" required="Y"/>
     <component name="FinancingDetails" required="N"/>
+    <component name="TriggeringInstruction" required="N"/>
     <group name="NoUnderlyings" required="N">
       <component name="UnderlyingInstrument" required="N"/>
     </group>
@@ -1421,6 +1421,7 @@
       <field name="TradingSessionSubID" required="N"/>
     </group>
     <component name="Instrument" required="Y"/>
+    <component name="TriggeringInstruction" required="N"/>
     <component name="FinancingDetails" required="N"/>
     <group name="NoUnderlyings" required="N">
       <component name="UnderlyingInstrument" required="N"/>
@@ -2828,53 +2829,72 @@
   </message>
   <message name="TradeCaptureReport" msgtype="AE" msgcat="app">
     <field name="TradeReportID" required="Y"/>
+	<field name="ExecID" required="N"/>    
     <field name="TradeReportTransType" required="N"/>
     <field name="TradeReportType" required="N"/>
-    <field name="TradeRequestID" required="N"/>
-    <field name="TrdType" required="N"/>
+	<field name="TrdType" required="N"/>
+    <field name="ExecType" required="N"/>
+    <field name="TradeReportRefID" required="N"/>	
+    <field name="MatchStatus" required="N"/>
+    <field name="MatchType" required="N"/>    
+    <component name="Instrument" required="Y"/>
+    <component name="UnderlyingInstrument" required="N"/>
+    <component name="FinancingDetails" required="N"/>
+    <component name="YieldData" required="N"/>
+	<component name="Stipulations" required="N"/>
+    <field name="Currency" required="N"/>
+    <field name="LastPx" required="Y"/>
+    <field name="LastQty" required="Y"/>
+    <field name="DirtyPrice" required="N"/>
+    <field name="TransactTime" required="N"/>
+    <field name="ValidUntilTime" required="N"/>
+    <field name="SettlType" required="N"/>
+    <field name="SettlDate" required="N"/>
+    <field name="TradeDate" required="N"/>
+    <field name="GrossTradeAmt" required="N"/>
+    <field name="TrdMatchID" required="N"/>
     <field name="TrdSubType" required="N"/>
+    <field name="TradeLegRefID" required="N"/>	
+    <group name="NoSides" required="Y">
+      <field name="Side" required="Y"/>
+      <component name="Parties" required="N"/>
+      <field name="Account" required="N"/>
+      <field name="StartCash" required="N"/>
+      <field name="EndCash" required="N"/>
+	</group>	
+    <field name="CopyMsgIndicator" required="N"/>
+	<!--
+    <field name="TradeRequestID" required="N"/>
     <field name="SecondaryTrdType" required="N"/>
     <field name="TransferReason" required="N"/>
-    <field name="ExecType" required="N"/>
     <field name="TotNumTradeReports" required="N"/>
     <field name="LastRptRequested" required="N"/>
     <field name="UnsolicitedIndicator" required="N"/>
     <field name="SubscriptionRequestType" required="N"/>
-    <field name="TradeReportRefID" required="N"/>
     <field name="SecondaryTradeReportRefID" required="N"/>
     <field name="SecondaryTradeReportID" required="N"/>
     <field name="TradeLinkID" required="N"/>
-    <field name="TrdMatchID" required="N"/>
-    <field name="ExecID" required="N"/>
     <field name="OrdStatus" required="N"/>
     <field name="SecondaryExecID" required="N"/>
     <field name="ExecRestatementReason" required="N"/>
     <field name="PreviouslyReported" required="Y"/>
     <field name="PriceType" required="N"/>
-    <component name="Instrument" required="Y"/>
-    <component name="FinancingDetails" required="N"/>
     <component name="OrderQtyData" required="N"/>
     <field name="QtyType" required="N"/>
-    <component name="YieldData" required="N"/>
     <group name="NoUnderlyings" required="N">
-      <component name="UnderlyingInstrument" required="N"/>
     </group>
     <field name="UnderlyingTradingSessionID" required="N"/>
     <field name="UnderlyingTradingSessionSubID" required="N"/>
-    <field name="LastQty" required="Y"/>
-    <field name="LastPx" required="Y"/>
     <field name="LastParPx" required="N"/>
     <field name="LastSpotRate" required="N"/>
     <field name="LastForwardPoints" required="N"/>
     <field name="LastMkt" required="N"/>
-    <field name="TradeDate" required="Y"/>
     <field name="ClearingBusinessDate" required="N"/>
     <field name="AvgPx" required="N"/>
     <component name="SpreadOrBenchmarkCurveData" required="N"/>
     <field name="AvgPxIndicator" required="N"/>
     <component name="PositionAmountData" required="N"/>
     <field name="MultiLegReportingType" required="N"/>
-    <field name="TradeLegRefID" required="N"/>
     <group name="NoLegs" required="N">
       <component name="InstrumentLeg" required="N"/>
       <field name="LegQty" required="N"/>
@@ -2889,21 +2909,13 @@
       <field name="LegSettlDate" required="N"/>
       <field name="LegLastPx" required="N"/>
     </group>
-    <field name="TransactTime" required="Y"/>
     <component name="TrdRegTimestamps" required="N"/>
     <field name="SettlType" required="N"/>
-    <field name="SettlDate" required="N"/>
-    <field name="MatchStatus" required="N"/>
-    <field name="MatchType" required="N"/>
-    <group name="NoSides" required="Y">
-      <field name="Side" required="Y"/>
       <field name="OrderID" required="Y"/>
       <field name="SecondaryOrderID" required="N"/>
       <field name="ClOrdID" required="N"/>
       <field name="SecondaryClOrdID" required="N"/>
       <field name="ListID" required="N"/>
-      <component name="Parties" required="N"/>
-      <field name="Account" required="N"/>
       <field name="AcctIDSource" required="N"/>
       <field name="AccountType" required="N"/>
       <field name="ProcessCode" required="N"/>
@@ -2915,7 +2927,6 @@
       <field name="TradeInputSource" required="N"/>
       <field name="TradeInputDevice" required="N"/>
       <field name="OrderInputDevice" required="N"/>
-      <field name="Currency" required="N"/>
       <field name="ComplianceID" required="N"/>
       <field name="SolicitedFlag" required="N"/>
       <field name="OrderCapacity" required="N"/>
@@ -2928,15 +2939,12 @@
       <field name="TradingSessionSubID" required="N"/>
       <field name="TimeBracket" required="N"/>
       <component name="CommissionData" required="N"/>
-      <field name="GrossTradeAmt" required="N"/>
       <field name="NumDaysInterest" required="N"/>
       <field name="ExDate" required="N"/>
       <field name="AccruedInterestRate" required="N"/>
       <field name="AccruedInterestAmt" required="N"/>
       <field name="InterestAtMaturity" required="N"/>
       <field name="EndAccruedInterestAmt" required="N"/>
-      <field name="StartCash" required="N"/>
-      <field name="EndCash" required="N"/>
       <field name="Concession" required="N"/>
       <field name="TotalTakedown" required="N"/>
       <field name="NetMoney" required="N"/>
@@ -2973,36 +2981,37 @@
         <component name="NestedParties2" required="N"/>
         <field name="AllocQty" required="N"/>
       </group>
-    </group>
-    <field name="CopyMsgIndicator" required="N"/>
+	  </group> 
     <field name="PublishTrdIndicator" required="N"/>
     <field name="ShortSaleReason" required="N"/>
+	-->
   </message>
   <message name="TradeCaptureReportAck" msgtype="AR" msgcat="app">
     <field name="TradeReportID" required="Y"/>
     <field name="TradeReportTransType" required="N"/>
     <field name="TradeReportType" required="N"/>
+    <field name="TrdRptStatus" required="N"/>
+    <field name="ExecID" required="N"/>
+    <field name="TransactTime" required="N"/>
+    <field name="TradeReportRejectReason" required="N"/>
+    <field name="TradeReportRefID" required="N"/>
+    <field name="Text" required="N"/>
+	<!--
     <field name="TrdType" required="N"/>
     <field name="TrdSubType" required="N"/>
     <field name="SecondaryTrdType" required="N"/>
     <field name="TransferReason" required="N"/>
     <field name="ExecType" required="Y"/>
-    <field name="TradeReportRefID" required="N"/>
     <field name="SecondaryTradeReportRefID" required="N"/>
-    <field name="TrdRptStatus" required="N"/>
-    <field name="TradeReportRejectReason" required="N"/>
     <field name="SecondaryTradeReportID" required="N"/>
     <field name="SubscriptionRequestType" required="N"/>
     <field name="TradeLinkID" required="N"/>
     <field name="TrdMatchID" required="N"/>
-    <field name="ExecID" required="N"/>
     <field name="SecondaryExecID" required="N"/>
-  <component name="Instrument" required="Y"/>
-    <field name="TransactTime" required="N"/>
+    <component name="Instrument" required="Y"/>
     <component name="TrdRegTimestamps" required="N"/>
     <field name="ResponseTransportType" required="N"/>
     <field name="ResponseDestination" required="N"/>
-    <field name="Text" required="N"/>
     <field name="EncodedTextLen" required="N"/>
     <field name="EncodedText" required="N"/>
     <group name="NoLegs" required="N">
@@ -3036,6 +3045,7 @@
       <component name="NestedParties2" required="N"/>
       <field name="AllocQty" required="N"/>
     </group>
+	-->
   </message>
   <message name="RegistrationInstructions" msgtype="o" msgcat="app">
     <field name="RegistID" required="Y"/>
@@ -3677,8 +3687,8 @@
         <field name="SecurityAltID" required="N"/>
         <field name="SecurityAltIDSource" required="N"/>
       </group>
-      
-      <!--field name="SymbolSfx" required="N"/>
+     <!-- 
+      <field name="SymbolSfx" required="N"/>
 	  <field name="Product" required="N"/>
       <field name="CFICode" required="N"/>
       <field name="MaturityMonthYear" required="N"/>
@@ -3709,10 +3719,16 @@
         <field name="EventText" required="N"/>
       </group>
       <field name="DatedDate" required="N"/>
-      <field name="InterestAccrualDate" required="N"/ -->
+      <field name="InterestAccrualDate" required="N"/>
+	  -->
     </component>
     <component name="UnderlyingInstrument">
       <field name="UnderlyingSymbol" required="Y"/>
+      <field name="UnderlyingSecuritySubType" required="N"/>
+      <field name="UnderlyingSecurityType" required="N"/>
+      <field name="UnderlyingQty" required="N"/>
+      <field name="UnderlyingPx" required="N"/>
+	<!--	  
       <field name="UnderlyingSymbolSfx" required="N"/>
       <field name="UnderlyingSecurityID" required="N"/>
       <field name="UnderlyingSecurityIDSource" required="N"/>
@@ -3722,8 +3738,6 @@
       </group>
       <field name="UnderlyingProduct" required="N"/>
       <field name="UnderlyingCFICode" required="N"/>
-      <field name="UnderlyingSecurityType" required="N"/>
-      <field name="UnderlyingSecuritySubType" required="N"/>
       <field name="UnderlyingMaturityMonthYear" required="N"/>
       <field name="UnderlyingMaturityDate" required="N"/>
       <field name="UnderlyingPutOrCall" required="N" />
@@ -3754,14 +3768,13 @@
       <field name="UnderlyingCPProgram" required="N"/>
       <field name="UnderlyingCPRegType" required="N"/>
       <field name="UnderlyingCurrency" required="N"/>
-      <field name="UnderlyingQty" required="N"/>
-      <field name="UnderlyingPx" required="N"/>
       <field name="UnderlyingDirtyPrice" required="N"/>
       <field name="UnderlyingEndPrice" required="N"/>
       <field name="UnderlyingStartValue" required="N"/>
       <field name="UnderlyingCurrentValue" required="N"/>
       <field name="UnderlyingEndValue" required="N"/>
-      <component name="UnderlyingStipulations" required="N"/>
+	-->
+    <component name="UnderlyingStipulations" required="N"/>
     </component>
     <component name="InstrumentLeg">
       <field name="LegSymbol" required="N"/>
@@ -3924,10 +3937,12 @@
     <component name="YieldData">
       <field name="YieldType" required="N"/>
       <field name="Yield" required="N"/>
-      <field name="YieldCalcDate" required="N"/>
       <field name="YieldRedemptionDate" required="N"/>
       <field name="YieldRedemptionPrice" required="N"/>
+	  <!--
+      <field name="YieldCalcDate" required="N"/>
       <field name="YieldRedemptionPriceType" required="N"/>
+	  -->
     </component>
     <component name="PositionQty">
       <group name="NoPositions" required="Y">
@@ -3980,15 +3995,17 @@
       <field name="DiscretionScope" required="N"/>
     </component>
     <component name="FinancingDetails">
-      <field name="AgreementDesc" required="N"/>
       <field name="AgreementID" required="N"/>
+      <field name="StartDate" required="N"/>
+      <field name="EndDate" required="N"/>
+	  <!--
+      <field name="AgreementDesc" required="N"/>
       <field name="AgreementDate" required="N"/>
       <field name="AgreementCurrency" required="N"/>
       <field name="TerminationType" required="N"/>
-      <field name="StartDate" required="N"/>
-      <field name="EndDate" required="N"/>
       <field name="DeliveryType" required="N"/>
       <field name="MarginRatio" required="N"/>
+	  -->
     </component>
 	<component name="TriggeringInstruction">
       <field name="TriggerType" required="N"/>
@@ -4771,6 +4788,10 @@
     <field number="231" name="ContractMultiplier" type="FLOAT"/>
     <field number="232" name="NoStipulations" type="NUMINGROUP"/>
     <field number="233" name="StipulationType" type="STRING">
+	<!-- Valores agregados para componente Stipulation usado en TCR - Pedro Mora 18/06/2019 -->
+	  <value enum="REPOPRICE" description="REPO_PRICE_FOR_SECURITY_OR_ORDER"/>
+      <value enum="CLEANPRICE" description="CLEAN_PRICE_OF_AN_ORDER_OR_EXECUTION"/>
+	<!-- Fin de valores agregados -->      
       <value enum="AMT" description="AMT"/>
       <value enum="AUTOREINV" description="AUTO_REINVESTMENT_AT_OR_BETTER"/>
       <value enum="BANKQUAL" description="BANK_QUALIFIED"/>
@@ -6831,10 +6852,10 @@
 	<field number="1623" name="FillYield" type="PERCENTAGE"/>
 	
 	<!-- NEW TAGS FOR TriggeringInstruction COMPONENT 21/05/2019 -->	
-	<field number="1100" name="TriggerType" type="QTY"/>
-    <field number="1101" name="TriggerAction" type="QTY"/>
-    <field number="1102" name="TriggerPrice" type="QTY"/>
-    <field number="1107" name="TriggerPriceType" type="QTY"/>
+	<field number="1100" name="TriggerType" type="CHAR"/>
+    <field number="1101" name="TriggerAction" type="CHAR"/>
+    <field number="1102" name="TriggerPrice" type="PRICE"/>
+    <field number="1107" name="TriggerPriceType" type="CHAR"/>
 	
 	<!-- NEW TAGS FOR INSTRUMENT AND OTHERS 20/05/2019 -->
     <field number="1138" name="DisplayQty" type="QTY"/>

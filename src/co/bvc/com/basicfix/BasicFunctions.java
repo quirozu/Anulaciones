@@ -14,8 +14,57 @@ public class BasicFunctions {
 	private static Connection conn;
 	private static Login login;
 	private static Map<String, String> quoteReqId = new HashMap<String, String>();
+	private static String quoteIdGenered;
+	private static String quoteId;
 	private static long idEjecution;
+	private static int idCaseSeq;
 	private static AdapterIO adapterIO;
+	private static int idCase;
+	private static int escenarioPrueba;
+	private static String iniciator;
+	private static String receptor;
+	private static int escenarioFinal;
+	private static boolean allMarket = false;
+
+	public static int getEscenarioFinal() {
+		return escenarioFinal;
+	}
+
+	public static void setEscenarioFinal(int escenarioFinal) {
+		BasicFunctions.escenarioFinal = escenarioFinal;
+	}
+
+	public static String getReceptor() {
+		return receptor;
+	}
+
+	public static void setReceptor(String receptor) {
+		BasicFunctions.receptor = receptor;
+	}
+
+	public static boolean isAllMarket() {
+		return allMarket;
+	}
+
+	public static void setAllMarket(boolean allMarket) {
+		BasicFunctions.allMarket = allMarket;
+	}
+
+	public static String getIniciator() {
+		return iniciator;
+	}
+
+	public static void setIniciator(String iniciator) {
+		BasicFunctions.iniciator = iniciator;
+	}
+
+	public static int getIdCase() {
+		return idCase;
+	}
+
+	public static void setIdCase(int d) {
+		BasicFunctions.idCase = d;
+	}
 
 	public static Connection getConn() {
 		return conn;
@@ -50,6 +99,22 @@ public class BasicFunctions {
 		return quoteReqId;
 	}
 
+	public static String getQuoteIdGenered() {
+		return quoteIdGenered;
+	}
+
+	public static void setQuoteIdGenered(String quoteIdGenered) {
+		BasicFunctions.quoteIdGenered = quoteIdGenered;
+	}
+
+	public static String getQuoteId() {
+		return quoteId;
+	}
+
+	public static void setQuoteId(String quoteId) {
+		BasicFunctions.quoteId = quoteId;
+	}
+
 	public static long getIdEjecution() {
 		return idEjecution;
 	}
@@ -58,12 +123,28 @@ public class BasicFunctions {
 		BasicFunctions.idEjecution = idEjecution;
 	}
 
+	public static int getIdCaseSeq() {
+		return idCaseSeq;
+	}
+
+	public static void setIdCaseSeq(int idCaseSeq) {
+		BasicFunctions.idCaseSeq = idCaseSeq;
+	}
+
 	public static AdapterIO getAdapterIO() {
 		return adapterIO;
 	}
 
 	public static void setAdapterIO(AdapterIO adapterIO) {
 		BasicFunctions.adapterIO = adapterIO;
+	}
+
+	public static int getEscenarioPrueba() {
+		return escenarioPrueba;
+	}
+
+	public static void setEscenarioPrueba(int escenarioPrueba) {
+		BasicFunctions.escenarioPrueba = escenarioPrueba;
 	}
 
 	/**
@@ -100,6 +181,12 @@ public class BasicFunctions {
 			BasicFunctions.login.initiation();
 		}
 	}
+	public static void FinalLogin() {
+		
+			BasicFunctions.login = new Login();
+			BasicFunctions.login.Final();
+		
+	}
 
 	public static void startVariables() {
 		SimpleDateFormat SDF = new SimpleDateFormat("yyyMMddHmmss");
@@ -111,9 +198,8 @@ public class BasicFunctions {
 	}
 
 	public static int getFirtsIdCaseSeq(int escenarioEjecucion) throws SQLException {
-//		int firstIdDB = DataAccess.getFirstIdCaseSeq(escenarioEjecucion);
-//		return firstIdDB;
-		return 0;
+		int firstIdDB = DataAccess.getFirstIdCaseSeq(escenarioEjecucion);
+		return firstIdDB;
 	}
 
 	public static void imprimir(String vari) {
