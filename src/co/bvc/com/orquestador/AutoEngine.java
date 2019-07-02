@@ -16,8 +16,10 @@ import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
+import quickfix.field.QuoteStatus;
 import quickfix.field.SenderSubID;
 import quickfix.field.TargetCompID;
+import quickfix.field.Text;
 import quickfix.Message;
 
 public class AutoEngine {
@@ -30,7 +32,6 @@ public class AutoEngine {
 		BasicFunctions.createConn();
 		int firsIdCaseSec = BasicFunctions.getFirtsIdCaseSeq(escenarioEjecucion);
 		BasicFunctions.setEscenarioPrueba(escenarioEjecucion);
-
 		if (firsIdCaseSec > 0) {
 			BasicFunctions.startVariables();
 			BasicFunctions.createLogin();
@@ -151,11 +152,38 @@ public class AutoEngine {
 			ejecutarSiguientePaso();
 		}
 	}
-	
 
-	public static void printMessage(String typeMsg, SessionID sessionId, Message message) throws FieldNotFound {
-		System.out.println("********************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sessionId
-				+ "\nMENSAJE :" + message + "\n----------------------------");
+	public void validar3(SessionID sessionId, Message messageIn)
+
+			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+
+		System.out.println("*************************");
+
+		System.out.println("** INGRESA A VALIDAR 3 **");
+
+		System.out.println("*************************");
+
+		String sIdAfiliado = sessionId.toString().substring(8, 11);
+
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+
+		Validaciones validaciones = new Validaciones();
+
+		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
+
+		// Eliminar Registro en Cache.
+
+		eliminarDatoCache(sIdAfiliado);
+
+		DataAccess.limpiarCache();
+
+		ejecutarSiguienteEscenario();
+
+		System.out.println("** CONTINUAR ***");
+
+		System.out.println("*********** SALIENDO DE VALIDAR 3 ************");
+
+		Thread.sleep(5000);
 
 	}
 

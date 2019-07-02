@@ -135,6 +135,22 @@ public class BasicFunctions {
 		BasicFunctions.quoteId = quoteId;
 	}
 
+	public static String getQuoteIdGenered() {
+		return quoteIdGenered;
+	}
+
+	public static void setQuoteIdGenered(String quoteIdGenered) {
+		BasicFunctions.quoteIdGenered = quoteIdGenered;
+	}
+
+	public static String getQuoteId() {
+		return quoteId;
+	}
+
+	public static void setQuoteId(String quoteId) {
+		BasicFunctions.quoteId = quoteId;
+	}
+
 	public static long getIdEjecution() {
 		return idEjecution;
 	}
@@ -199,6 +215,12 @@ public class BasicFunctions {
 			BasicFunctions.login = new Login();
 			BasicFunctions.login.initiation();
 		}
+	}
+	public static void FinalLogin() {
+		
+			BasicFunctions.login = new Login();
+			BasicFunctions.login.Final();
+		
 	}
 
 	public static void startVariables() {

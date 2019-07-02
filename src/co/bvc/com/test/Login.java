@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.bvc.com.basicfix.BasicFunctions;
+import co.bvc.com.orquestador.Path;
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -41,61 +42,56 @@ public class Login {
 		application = BasicFunctions.getAdapterIO();
 
 		try {
-			sessionID1 = startSession("sessionSettings1_27.cfg");
+			sessionID1 = startSession(Path.PATH_CONFIG1_27.getCode());
 			if (sessionID1 == null) {
-				System.out.println("Conexi�n 1 errada");
+				System.out.println("Conexion 1 errada");
 			} else {
 				Session.lookupSession(sessionID1).logon();
 				mapSessiones.put(sessionID1.getSenderCompID(), sessionID1);
 				// BasicFunctions.logon(sessionID1);
-				System.out.println(
-						"SESSION ADICIONADA. " + sessionID1.getSenderCompID() + " : " + sessionID1);
+				System.out.println("SESSION ADICIONADA. " + sessionID1.getSenderCompID() + " : " + sessionID1);
 			}
 
-			sessionID2 = startSession("sessionSettings2_35.cfg");
+			sessionID2 = startSession(Path.PATH_CONFIG2_35.getCode());
 			if (sessionID2 == null) {
-				System.out.println("Conexi�n 2 errada");
+				System.out.println("Conexion 2 errada");
 			} else {
 				Session.lookupSession(sessionID2).logon();
 //				BasicFunctions.logon(sessionID2);
 				mapSessiones.put(sessionID2.getSenderCompID(), sessionID2);
 
-				System.out.println(
-						"SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
+				System.out.println("SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
 			}
 
-			sessionID3 = startSession("sessionSettings2_37.cfg");
+			sessionID3 = startSession(Path.PATH_CONFIG2_37.getCode());
 			if (sessionID3 == null) {
-				System.out.println("Conexi�n 3 errada");
+				System.out.println("Conexion 3 errada");
 			} else {
 				Session.lookupSession(sessionID3).logon();
 				mapSessiones.put(sessionID3.getSenderCompID(), sessionID3);
-				System.out.println(
-						"SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
+				System.out.println("SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
 			}
 
-			sessionID4 = startSession("sessionSettings1_19.cfg");
+			sessionID4 = startSession(Path.PATH_CONFIG1_19.getCode());
 			if (sessionID4 == null) {
-				System.out.println("Conexi�n 4 errada");
+				System.out.println("Conexion 4 errada");
 			} else {
 				Session.lookupSession(sessionID4).logon();
 
 				mapSessiones.put(sessionID4.getSenderCompID(), sessionID4);
 
-				System.out.println(
-						"SESSION ADICIONADA. " + sessionID4.getSenderCompID() + " : " + sessionID4);
+				System.out.println("SESSION ADICIONADA. " + sessionID4.getSenderCompID() + " : " + sessionID4);
 			}
 
-			sessionID5 = startSession("sessionSettings1_20.cfg");
+			sessionID5 = startSession(Path.PATH_CONFIG1_20.getCode());
 			if (sessionID5 == null) {
-				System.out.println("Conexi�n 5 errada");
+				System.out.println("Conexion 5 errada");
 			} else {
 				Session.lookupSession(sessionID5).logon();
 
 				mapSessiones.put(sessionID5.getSenderCompID(), sessionID5);
 
-				System.out.println(
-						"SESSION ADICIONADA. " + sessionID5.getSenderCompID() + " : " + sessionID5);
+				System.out.println("SESSION ADICIONADA. " + sessionID5.getSenderCompID() + " : " + sessionID5);
 			}
 
 			System.out.println("************************************");
@@ -104,6 +100,28 @@ public class Login {
 
 			System.out.println("*************************************");
 			System.out.println("***  SESIONES CREADAS E INICIADAS ***");
+			System.out.println("*************************************");
+
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		} finally {
+			System.out.println(" ");
+
+		}
+
+	}
+
+	public void Final() {
+
+		try {
+		for (Map.Entry<String, SessionID> sesion : mapSessiones.entrySet()) {
+
+			Session.lookupSession(sesion.getValue()).logout();
+
+			}
+
+			System.out.println("*************************************");
+			System.out.println("***  SESIONES CERRADAS ***");
 			System.out.println("*************************************");
 
 		} catch (Exception exp) {
@@ -150,7 +168,8 @@ public class Login {
 	private SessionID startSession(String fileConf) {
 		SocketInitiator socketInitiator = null;
 		try {
-			SessionSettings sessionSettings = new SessionSettings("resources\\" + fileConf);
+			//SessionSettings sessionSettings = new SessionSettings("resources\\" + fileConf);
+			SessionSettings sessionSettings = new SessionSettings(fileConf);
 
 			FileStoreFactory fileStoreFactory = new FileStoreFactory(sessionSettings);
 			FileLogFactory fileLogFactory = new FileLogFactory(sessionSettings);
@@ -168,5 +187,6 @@ public class Login {
 			return null;
 		}
 	}
+
 
 }

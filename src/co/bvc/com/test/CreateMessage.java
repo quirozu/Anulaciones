@@ -12,6 +12,8 @@ import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
 import quickfix.field.BeginString;
+import quickfix.field.BidSize;
+import quickfix.field.BidYield;
 import quickfix.field.NoPartyIDs;
 import quickfix.field.NoSides;
 import quickfix.field.PartyID;
@@ -130,7 +132,84 @@ public class CreateMessage {
 		}
 
 		return null;
-		
+
 	}
-	
+
+	public RespuestaConstrucccionMsgFIX createAJ(ResultSet resultset, String strQuoteId)
+			throws SessionNotFound, SQLException {
+
+		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+
+		String strQuoteRespId = BasicFunctions.getIdEjecution() + resultset.getString("ID_CASE") + "_AJ";
+
+		try {
+			QuoteRespID quoteRespID = new QuoteRespID(strQuoteRespId);
+			QuoteRespType qouteRespType = new QuoteRespType(resultset.getInt("RQ_QUORESPTYPE"));
+			QuoteResponse quoteResponse = new QuoteResponse(quoteRespID, qouteRespType); // 35 --> AJ
+
+			Header header = (Header) quoteResponse.getHeader();
+			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
+
+			quoteResponse.setField(new QuoteID(strQuoteId));
+			quoteResponse.setField(new StringField(54, resultset.getString("RQ_SIDE")));
+			quoteResponse.set(new Symbol(resultset.getString("RQ_SYMBOL")));
+			quoteResponse.setField(new StringField(762, resultset.getString("RQ_SECSUBTYPE")));
+
+			System.out.println("NOS Message Sent : " + quoteResponse);
+
+			respuestaMessage.setMessage(quoteResponse);
+
+			List<String> list = new ArrayList<String>();
+			list.add(BasicFunctions.getIniciator());
+			list.add(BasicFunctions.getReceptor());
+
+			respuestaMessage.setListSessiones(list);
+
+			System.out.println("****************");
+			System.out.println("** AJ CREADO  **");
+			System.out.println(quoteResponse);
+			System.out.println("****************");
+
+			return respuestaMessage;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public RespuestaConstrucccionMsgFIX createZ(final SessionID sessionId, ResultSet resultSet)
+			throws SessionNotFound, SQLException {
+
+		System.out.println("------------------------------\nDATOS RECIBIDOS PARA Z....\nSession: " + sessionId);
+
+		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+
+		QuoteCancel quoteCancel = new QuoteCancel();
+		Header header = (Header) quoteCancel.getHeader();
+		header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
+
+		quoteCancel.setField(new QuoteCancelType(5));// RQ_QUOTECANCTYPE
+		quoteCancel.setField(new QuoteID(BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_S"));
+
+		System.out.println("Nos Message Sent : " + quoteCancel);
+
+		respuestaMessage.setMessage(quoteCancel);
+
+		List<String> list = new ArrayList<String>();
+
+		list.add(BasicFunctions.getIniciator());
+		list.add(BasicFunctions.getReceptor());
+
+		respuestaMessage.setListSessiones(list);
+
+		System.out.println("****************");
+		System.out.println("** Z CREADO  **");
+		System.out.println(quoteCancel);
+		System.out.println("****************");
+
+		return respuestaMessage;
+	}
+
 }
