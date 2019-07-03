@@ -3,6 +3,7 @@ package co.bvc.com.basicfix;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,41 +20,99 @@ public class BasicFunctions {
 	private static long idEjecution;
 	private static int idCaseSeq;
 	private static AdapterIO adapterIO;
-	private static int idCase = 0;
+	private static int idCase;
 	private static int escenarioPrueba;
 	private static String iniciator;
 	private static String receptor;
+	private static int escenarioFinal;
 	private static boolean allMarket = false;
-	private static String TrdMatchID;
-	private static int lastPx;
-	private static int lastQTy;
 	
-//	private static RespuestaConstrucccionMsgFIX cache;
+	// Mensaje AE
 	
-	public static int getLastPx() {
+	private static String trdMatchId;
+	private static Double lastPx;
+	private static Double lastQPy;
+	private static LocalDateTime transactTime;
+	private static String symbol;
+	private static String securitySybType;
+	private static String securityId;
+	private static String securityIdSource;
+	
+
+	public static String getTrdMatchId() {
+		return trdMatchId;
+	}
+
+	public static void setTrdMatchId(String trdMatchId) {
+		BasicFunctions.trdMatchId = trdMatchId;
+	}
+
+	public static Double getLastQPy() {
+		return lastQPy;
+	}
+
+	public static void setLastQPy(Double lastQPy) {
+		BasicFunctions.lastQPy = lastQPy;
+	}
+
+	public static LocalDateTime getTransactTime() {
+		return transactTime;
+	}
+
+	public static void setTransactTime(LocalDateTime transactTime) {
+		BasicFunctions.transactTime = transactTime;
+	}
+
+	public static Double getLastPx() {
 		return lastPx;
 	}
 
-	public static void setLastPx(int lastPx) {
+	public static void setLastPx(Double lastPx) {
 		BasicFunctions.lastPx = lastPx;
 	}
 
-	public static int getLastQTy() {
-		return lastQTy;
+	public static String getSymbol() {
+		return symbol;
 	}
 
-	public static void setLastQTy(int lastQTy) {
-		BasicFunctions.lastQTy = lastQTy;
-	}	
-	
-	public static String getTrdMatchID() {
-		return TrdMatchID;
+	public static void setSymbol(String symbol) {
+		BasicFunctions.symbol = symbol;
 	}
 
-	public static void setTrdMatchID(String trdMatchID) {
-		TrdMatchID = trdMatchID;
+	public static String getSecuritySybType() {
+		return securitySybType;
+	}
+
+	public static void setSecuritySybType(String securitySybType) {
+		BasicFunctions.securitySybType = securitySybType;
+	}
+
+	public static String getSecurityId() {
+		return securityId;
+	}
+
+	public static void setSecurityId(String securityId) {
+		BasicFunctions.securityId = securityId;
+	}
+
+	public static String getSecurityIdSource() {
+		return securityIdSource;
+	}
+
+	public static void setSecurityIdSource(String securityIdSource) {
+		BasicFunctions.securityIdSource = securityIdSource;
 	}
 	
+	// 
+
+	public static int getEscenarioFinal() {
+		return escenarioFinal;
+	}
+
+	public static void setEscenarioFinal(int escenarioFinal) {
+		BasicFunctions.escenarioFinal = escenarioFinal;
+	}
+
 	public static String getReceptor() {
 		return receptor;
 	}
@@ -101,38 +160,22 @@ public class BasicFunctions {
 	public static void setLogin(Login login) {
 		BasicFunctions.login = login;
 	}
-	
+
 	// Metodo de QuoteReqId
 	public static void addQuoteReqId(String k, String v) {
 		BasicFunctions.quoteReqId.put(k, v);
 	}
-	
+
 	public static String getQuoteReqIdOfAfiliado(String afiliado) {
 		return BasicFunctions.quoteReqId.get(afiliado);
 	}
-	
+
 	public static void setQuoteReqId(Map<String, String> quoteReqId) {
 		BasicFunctions.quoteReqId = quoteReqId;
 	}
 
 	public static Map<String, String> getQuoteReqId() {
 		return quoteReqId;
-	}
-	
-	public static String getQuoteIdGenered() {
-		return quoteIdGenered;
-	}
-
-	public static void setQuoteIdGenered(String quoteIdGenered) {
-		BasicFunctions.quoteIdGenered = quoteIdGenered;
-	}
-
-	public static String getQuoteId() {
-		return quoteId;
-	}
-
-	public static void setQuoteId(String quoteId) {
-		BasicFunctions.quoteId = quoteId;
 	}
 
 	public static String getQuoteIdGenered() {
@@ -184,7 +227,8 @@ public class BasicFunctions {
 	}
 
 	/**
-	 * Crea la conexion la db y se la asigna a la variable conn de BasicFunctions
+	 * Crea la conexi�n a la db y se la asigna a la variable conn de
+	 * BasicFunctions
 	 * 
 	 * @return
 	 */
@@ -208,7 +252,7 @@ public class BasicFunctions {
 	public static void createLogin() {
 		if (BasicFunctions.adapterIO == null) {
 			BasicFunctions.adapterIO = new AdapterIO();
-		
+
 		}
 
 		if (BasicFunctions.login == null) {
@@ -229,23 +273,25 @@ public class BasicFunctions {
 		System.out.println("ID_EJECUCION GENERADO : " + id_ejecution);
 
 		BasicFunctions.setIdEjecution(id_ejecution);
-		
+
 	}
-	
+
 	public static int getFirtsIdCaseSeq(int escenarioEjecucion) throws SQLException {
 		int firstIdDB = DataAccess.getFirstIdCaseSeq(escenarioEjecucion);
 		return firstIdDB;
 	}
 
-	
 	public static void imprimir(String vari) {
-		System.out.println("\n***********************\nCLASE: "+ vari.getClass()+ "VARIABLE: "+ vari + "\n***********************");
+		System.out.println(
+				"\n#####################\nCLASE: " + vari.getClass() + "VARIABLE: " + vari + "\n#####################");
 	}
+
 	public static void imprimir(int vari) {
-		System.out.println("\n***********************\nVARIABLE ENTERA: "+ vari + "\n***********************");
+		System.out.println("\n#####################\nVARIABLE ENTERA: " + vari + "\n#####################");
 	}
+
 	public static void imprimir(boolean vari) {
-		System.out.println("\n***********************\nVARIABLE BOOLEAN: "+ vari + "\n***********************");
+		System.out.println("\n#####################\nVARIABLE BOOLEAN: " + vari + "\n#####################");
 	}
 
 }

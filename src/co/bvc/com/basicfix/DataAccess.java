@@ -34,6 +34,7 @@ public class DataAccess {
 				HOST = lineas[3].split("=")[1].trim();
 				PORT = lineas[4].split("=")[1].trim();
 				String driver = "com.mysql.jdbc.Driver";
+				//127.0.0.1
 				String _url = "jdbc:mysql://" + HOST + ":" + PORT + "/" + _db;
 				Class.forName(driver);
 				conn = DriverManager.getConnection(_url, _usuario, _pwd);
@@ -61,7 +62,7 @@ public class DataAccess {
 
 		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_tcr_datos" + " WHERE ID_CASE= "
 				+ escenarioEjecucion + " ORDER BY ID_CASESEQ ASC LIMIT 1";
-		
+
 		ResultSet rs = DataAccess.getQuery(queryInicio);
 		int idCaseSeq = -1;
 
@@ -77,7 +78,15 @@ public class DataAccess {
 
 	public static ResultSet datosMensaje(int idCaseSeq) throws SQLException {
 
-		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
+		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos WHERE ID_CASESEQ=" + idCaseSeq;
+		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
+
+		return rsDatos;
+	}
+	
+	public static ResultSet datosMensajeTrc(int idCaseSeq) throws SQLException {
+
+		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + 1;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
 
 		return rsDatos;
@@ -116,6 +125,7 @@ public class DataAccess {
 		String queryInicio = "SELECT * FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
 				+ "'";
 		ResultSet rs = DataAccess.getQuery(queryInicio);
+		System.out.println("RS " + rs);
 
 		while (rs.next()) {
 			// Crea el objeto recuperado.
@@ -156,23 +166,6 @@ public class DataAccess {
 	public static void limpiarCache() throws SQLException {
 		String strQueryLimpiar = "DELETE FROM `bvc_automation_db`.`aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
 		setQuery(strQueryLimpiar);
-	}
-	
-	public static void cargarLogs3(Message message, long ID_EJECUCION, String idEscenario, String idCase, int idSecuencia) throws SQLException, FieldNotFound {
-
-		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		ps.setLong(1, ID_EJECUCION);
-		ps.setString(2, idEscenario);
-		ps.setString(3, idCase);
-		ps.setInt(4, idSecuencia);
-		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-		ps.setString(6, "FALLIDO");
-		ps.setString(7, message.getString(58));
-		ps.setString(8, message.toString());
-		ps.setNull(9, Types.INTEGER);
-		ps.executeUpdate();
-
 	}
 
 	public static void cargarLogsFallidos(Message message, long ID_EJECUCION, String clave, String valor,

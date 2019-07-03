@@ -1,8 +1,10 @@
 package co.bvc.com.test;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.orquestador.AutoEngine;
 import quickfix.Application;
@@ -14,12 +16,21 @@ import quickfix.IncorrectTagValue;
 import quickfix.Message;
 import quickfix.RejectLogon;
 import quickfix.SessionID;
+import quickfix.SessionNotFound;
 import quickfix.UnsupportedMessageType;
 import quickfix.field.Password;
+import quickfix.field.PossDupFlag;
 import quickfix.field.Username;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.Logon;
 import quickfix.fix44.MessageCracker;
+import quickfix.fix44.Quote;
+import quickfix.fix44.QuoteCancel;
+import quickfix.fix44.QuoteRequest;
+import quickfix.fix44.QuoteRequestReject;
+import quickfix.fix44.QuoteResponse;
+import quickfix.fix44.QuoteStatusReport;
+import quickfix.fix44.Reject;
 
 public class AdapterIO extends MessageCracker implements Application {
 
@@ -306,7 +317,7 @@ public class AdapterIO extends MessageCracker implements Application {
 
 	public void onMessage(quickfix.fix44.QuoteCancel message, SessionID sessionID) throws FieldNotFound {
 
-		printMessage("QuoteCancel", sessionID, message);
+		if (message instanceof QuoteCancel) {
 
 			printMessage("QuoteCancel", sessionID, message);
 
