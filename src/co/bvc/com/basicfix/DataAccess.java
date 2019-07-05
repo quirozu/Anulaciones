@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.LinkedList;
-
 import co.bvc.com.dao.domain.AutFixRfqDatosCache;
 import quickfix.FieldNotFound;
 import quickfix.Message;
@@ -60,7 +58,7 @@ public class DataAccess {
 
 	public static int getFirstIdCaseSeq(int escenarioEjecucion) throws SQLException {
 
-		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_tcr_datos" + " WHERE ID_CASE= "
+		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_rfq_datos" + " WHERE ID_CASE= "
 				+ escenarioEjecucion + " ORDER BY ID_CASESEQ ASC LIMIT 1";
 
 		ResultSet rs = DataAccess.getQuery(queryInicio);

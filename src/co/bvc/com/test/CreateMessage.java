@@ -35,6 +35,7 @@ import quickfix.field.QuoteID;
 import quickfix.field.QuoteReqID;
 import quickfix.field.QuoteRespID;
 import quickfix.field.QuoteRespType;
+import quickfix.field.SecurityID;
 import quickfix.field.SecurityIDSource;
 import quickfix.field.SecuritySubType;
 import quickfix.field.SenderCompID;
@@ -51,6 +52,7 @@ import quickfix.fix44.QuoteCancel;
 import quickfix.fix44.QuoteRequest;
 import quickfix.fix44.QuoteResponse;
 import quickfix.fix44.TradeCaptureReport;
+import quickfix.fix44.component.Parties;
 import quickfix.fix44.Message;
 import quickfix.fix44.Message.Header;
 
@@ -64,7 +66,8 @@ public class CreateMessage {
 		String queryParties = "SELECT linea.ID_ESCENARIO, partes.RQ_PARTYID, partes.RQ_PARTYIDSOURCE, partes.RQ_PARTYROLE, partes.RECEIVER_SESSION\r\n"
 				+ "FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_rfqparty_datos partes\r\n"
 				+ "	ON linea.ID_CASESEQ = partes.RFQ_IDCASE\r\n" + "WHERE linea.ID_CASESEQ ="
-				+ BasicFunctions.getIdCaseSeq();
+				+ "1";
+//				BasicFunctions.getIdCaseSeq();
 
 		System.out.println("******************\n SECUENCIA DE ESCENARIO: "+ BasicFunctions.getIdCaseSeq() + "\n******************" );
 		
@@ -75,84 +78,84 @@ public class CreateMessage {
 			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
 			resultSetParties = DataAccess.getQuery(queryParties);
 			
+			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
+			
 			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
 			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
-			TradeCaptureReport trc = new TradeCaptureReport();
-			trc.setField(tradeReportID);	
-			Header header = (Header) trc.getHeader();
+			TradeCaptureReport tcr = new TradeCaptureReport();
+			tcr.setField(tradeReportID);	
+			Header header = (Header) tcr.getHeader();
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
-			trc.setField(new TradeReportTransType(0));
-			trc.setField(new TradeReportType(96));
-	        trc.setField(new TrdMatchID(BasicFunctions.getTrdMatchId()));
-	        trc.setField(new LastPx(BasicFunctions.getLastPx()));
-	        trc.setField(new LastQty(BasicFunctions.getLastQPy()));
-	        trc.setField(new TransactTime(BasicFunctions.getTransactTime()));
-	        
-	        
-			trc.setField(new Symbol(BasicFunctions.getSymbol()));
-			trc.setField(new SecuritySubType(BasicFunctions.getSecurityId()));
-			trc.setField(new NoSides(resultSet.getInt("AE_NOSIDES")));
-//			trc.setField(new Side(resultSet.getString("AE_SIDE")));
-		
-
-			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
-
-			Symbol symbol = resultSet.getString("AE_SYMBOL") == null ?  new Symbol(" ") :  new Symbol(resultSet.getString("AE_SYMBOL"));
-//			noRelatedSym.set(symbol);
-//			noRelatedSym.setField(new SecurityIDSource("M"));
-//			noRelatedSym.isSetField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
-//			noRelatedSym.setField(new Side());
-//			noRelatedSym.setField(new StringField(54, resultSet.getString("AE_SIDE")));
-//			noRelatedSym.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
-//			noRelatedSym.setField(new NoPartyIDs());
-
+			tcr.setField(new TradeReportTransType(0));
+			tcr.setField(new TradeReportType(96));
+	        tcr.setField(new TrdMatchID(BasicFunctions.getTrdMatchId()));
+	        tcr.setField(new LastPx(BasicFunctions.getLastPx()));
+	        tcr.setField(new LastQty(BasicFunctions.getLastQPy()));
+	        tcr.setField(new TransactTime(BasicFunctions.getTransactTime()));
+	        tcr.setField(new SecurityID(BasicFunctions.getSecurityId()));
+	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
+			tcr.setField(new Symbol(BasicFunctions.getSymbol()));
+			tcr.setField(new SecuritySubType(BasicFunctions.getSecurityId()));
+			tcr.setField(new NoSides(1));
+			tcr.setField(new Side(BasicFunctions.getSides()));
+			
+			TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
+			
+			Parties parties = new Parties();
 			
 			
-			QuoteCancel.NoPartyIDs parte =  new QuoteCancel.NoPartyIDs();
-//			QuoteRequest.NoRelatedSym.NoPartyIDs parte = new QuoteRequest.NoRelatedSym.NoPartyIDs();
-
-			List<String> list = new ArrayList<String>();
-			String idAfiliado = resultSet.getString("ID_AFILIADO");
-			list.add(idAfiliado);
-//			 Parties
-			while (resultSetParties.next()) {
-				String rSession = resultSetParties.getString("RECEIVER_SESSION");
-				if (rSession != null) {
-					list.add(rSession);
-				}
-
+			
+			//Parties
+			while(resultSetParties.next()) {
+				
 				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
 				parte.set(new PartyIDSource('C'));
 				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
-
-				noRelatedSym.addGroup(parte);
+				
 			}
+	
+			parties.addGroup(parte);
+			noSides.set(parties);
+			tcr.addGroup(noSides);			
+
 			
-			if (noRelatedSym.getInt(NoPartyIDs.FIELD) == 1) {
-				System.out.println("\n\nPARA TODO EL MERCADO.....\n");
-				BasicFunctions.setAllMarket(true);
-				list.clear();
-				Iterator<String> itSessiones = Login.getMapSessiones().keySet().iterator();
+			System.out.println("****************>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			System.out.println("** AE CREADO  **");
+			System.out.println(tcr);
+			System.out.println("***************");
 
-				while (itSessiones.hasNext()) {
-					String idAfiliadoMap = itSessiones.next();
-					list.add(idAfiliadoMap);
-					System.out.println("Nuevo Afiliado: " + idAfiliadoMap + " -> Session: "
-							+ Login.getMapSessiones().get(idAfiliadoMap));
-				}
-				// Se asigna Session+r Para validar R prima al inicializador
-				list.add(idAfiliado + "AE");
+//			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
+					
 
-			}
+//			List<String> list = new ArrayList<String>();
+//			String idAfiliado = resultSet.getString("ID_AFILIADO");
+//			list.add(idAfiliado);
+//
+//			if (noRelatedSym.getInt(NoPartyIDs.FIELD) == 1) {
+//				System.out.println("\n\nPARA TODO EL MERCADO.....\n");
+//				BasicFunctions.setAllMarket(true);
+//				list.clear();
+//				Iterator<String> itSessiones = Login.getMapSessiones().keySet().iterator();
+//
+//				while (itSessiones.hasNext()) {
+//					String idAfiliadoMap = itSessiones.next();
+//					list.add(idAfiliadoMap);
+//					System.out.println("Nuevo Afiliado: " + idAfiliadoMap + " -> Session: "
+//							+ Login.getMapSessiones().get(idAfiliadoMap));
+//				}
+//				// Se asigna Session+r Para validar R prima al inicializador
+//				list.add(idAfiliado + "AE");
+//
+//			}
 
-			trc.addGroup(noRelatedSym);
+//			tcr.addGroup(noRelatedSym);
 
-			respuestaMessage.setMessage(trc);
-			respuestaMessage.setListSessiones(list);
+			respuestaMessage.setMessage(tcr);
+//			respuestaMessage.setListSessiones(list);
 
 			System.out.println("***************");
 			System.out.println("** AE CREADO  **");
-			System.out.println(trc);
+			System.out.println(tcr);
 			System.out.println("***************");
 
 			System.out.println(respuestaMessage);

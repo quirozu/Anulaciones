@@ -37,7 +37,15 @@ public class BasicFunctions {
 	private static String securitySybType;
 	private static String securityId;
 	private static String securityIdSource;
+	private static char sides;
 	
+	public static char getSides() {
+		return sides;
+	}
+
+	public static void setSides(char sides) {
+		BasicFunctions.sides = sides;
+	}
 
 	public static String getTrdMatchId() {
 		return trdMatchId;

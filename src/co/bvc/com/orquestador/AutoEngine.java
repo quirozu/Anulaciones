@@ -70,7 +70,7 @@ public class AutoEngine {
 				enviarMensaje(rsDatos);
 				Thread.sleep(5000);
 				BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
-				System.out.println("++++++++++++++++ SECUENCIA ++++++++ " + BasicFunctions.getIdCaseSeq());
+				System.out.println("************* SECUENCIA *************" + BasicFunctions.getIdCaseSeq());
 			}
 
 		}
@@ -103,7 +103,7 @@ public class AutoEngine {
 				enviarMensaje(rsDatos);
 				Thread.sleep(5000);
 				BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
-				System.out.println("++++++++++++++++ SECUENCIA ++++++++ " + BasicFunctions.getIdCaseSeq());
+				System.out.println("************* SECUENCIA ************* " + BasicFunctions.getIdCaseSeq());
 			}
 
 		}
@@ -122,20 +122,18 @@ public class AutoEngine {
 
 		System.out.println("*********************\n" + msgType + "\n*********************");
 		switch (msgType) {
-
+		
 		case "FIX_R":
 			
 			
 			System.out.println("************************************************************");
 			System.out.println("************************************************************");
 			System.out.println("********                                            ********");
-			System.out.println("********                     COMIENZA ESCENARIO "+ idCase + "                      ********");
+			System.out.println("********             COMIENZA ESCENARIO "+ idCase+     "********");
 			System.out.println("********                                            ********");
 			System.out.println("************************************************************");
 			System.out.println("************************************************************");
 			
-			
-
 			System.out.println("*********************");
 			System.out.println("** INGRESA A FIX_R **");
 			System.out.println("*********************");
@@ -266,7 +264,9 @@ public class AutoEngine {
 			System.out.println("**********************");
 			
 			respConstruccion = createMesage.createAE(resultSet);
-			System.out.println("INGRESA A AE ---- EMPEZAR A CREAR MENSAJE DE EA");
+			
+			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
+			System.out.println("MENSAJE DE ENVIADO");
 			
 			break;
 			
@@ -277,7 +277,7 @@ public class AutoEngine {
 			System.out.println("**********************");
 			
 //			respConstruccion = createMesage.createAE(resultSet);
-			System.out.println("INGRESA A AE ---- EMPEZAR A CREAR MENSAJE DE ER");
+			System.out.println("INGRESA A AR ---- EMPEZAR A CREAR MENSAJE DE ER");
 			
 			break;
 			
@@ -413,9 +413,13 @@ public class AutoEngine {
 	    BasicFunctions.setSymbol(messageIn.getString(55));
 	    BasicFunctions.setSecuritySybType(messageIn.getString(762));
 	    BasicFunctions.setSecurityId(messageIn.getString(48));
+	    BasicFunctions.setSecurityIdSource(messageIn.getString(22));
+	    BasicFunctions.setSides(messageIn.getChar(54));
 	    
-	    System.out.println(" PRUEBAS DE EXTRACCION PARA ARMADO *********************************** "+BasicFunctions.getTrdMatchId() + "" + BasicFunctions.getLastPx() + "" + BasicFunctions.getLastQPy());
-		
+	    System.out.println(" PRUEBAS DE EXTRACCION PARA ARMADO *********************************** "+BasicFunctions.getTrdMatchId() + " lastPx " + BasicFunctions.getLastPx() + " LastQPy " + BasicFunctions.getLastQPy()
+	     + " TransactTime " + BasicFunctions.getTransactTime() + " Symbol " + BasicFunctions.getSymbol() + " SecuritySybType " + BasicFunctions.getSecuritySybType() + " SecurityId " + BasicFunctions.getSecurityId() 
+	     + " SecurityIdSource " + BasicFunctions.getSecurityIdSource()+ " Sides " + BasicFunctions.getSides() );
+	    
 		// getcache
 		AutFixRfqDatosCache datosCache = obtenerCache(IdContraFirm);
 		Validaciones validaciones = new Validaciones();
@@ -425,7 +429,7 @@ public class AutoEngine {
 		eliminarDatoCache(IdContraFirm);
 
 		if (DataAccess.validarContinuidadEjecucion()) {
-			ejecutarSiguientePaso();
+			ejecutarSiguientePasoTcr();
 			System.out.println("** CONTINUAR ***");
 
 		} else {
@@ -493,7 +497,7 @@ public class AutoEngine {
 
 		if (DataAccess.validarContinuidadEjecucion()) {
 			ejecutarSiguientePaso();
-			System.out.println("** CONTINUAR ***");
+			System.out.println("*** CONTINUAR ***");
 		} else {
 			System.out.println("**** ESPERAR ****");
 		}
@@ -541,7 +545,7 @@ public class AutoEngine {
 		ResultSet resultset = DataAccess.getQuery(query);
 		while (resultset.next()) {
 			int cas = resultset.getInt("ID_CASESEQ");
-			System.out.println("+++++++++++++++++++++++++++++++ " + cas);
+			System.out.println("******************* " + cas);
 			BasicFunctions.setIdCaseSeq(cas);
 			ejecutarSiguientePaso();
 		}
@@ -552,31 +556,21 @@ public class AutoEngine {
 			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
 
 		System.out.println("*************************");
-
 		System.out.println("** INGRESA A VALIDAR 3 **");
-
 		System.out.println("*************************");
 
 		String sIdAfiliado = sessionId.toString().substring(8, 11);
-
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 
 		Validaciones validaciones = new Validaciones();
-
 		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
 
 		// Eliminar Registro en Cache.
-
 		eliminarDatoCache(sIdAfiliado);
-
 		DataAccess.limpiarCache();
-
 		ejecutarSiguienteEscenario();
-
 		System.out.println("** CONTINUAR ***");
-
 		System.out.println("*********** SALIENDO DE VALIDAR 3 ************");
-
 		Thread.sleep(5000);
 
 	}
