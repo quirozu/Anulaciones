@@ -96,14 +96,12 @@ public class CreateMessage {
 	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
 			tcr.setField(new Symbol(BasicFunctions.getSymbol()));
 			tcr.setField(new SecuritySubType(BasicFunctions.getSecurityId()));
-			tcr.setField(new NoSides(1));
+//			tcr.setField(new NoSides(1));
 			tcr.setField(new Side(BasicFunctions.getSides()));
 			
 			TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
 			
 			Parties parties = new Parties();
-			
-			
 			
 			//Parties
 			while(resultSetParties.next()) {
@@ -112,17 +110,15 @@ public class CreateMessage {
 				parte.set(new PartyIDSource('C'));
 				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
 				
+				parties.addGroup(parte);
+				noSides.addGroup(parte);
 			}
-	
-			parties.addGroup(parte);
-			noSides.set(parties);
-			tcr.addGroup(noSides);			
 
 			
-			System.out.println("****************>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			System.out.println("** AE CREADO  **");
-			System.out.println(tcr);
-			System.out.println("***************");
+
+//			tcr.addGroup(noSides);
+//			noSides.set(parties);
+			tcr.addGroup(noSides);			
 
 //			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
 					
