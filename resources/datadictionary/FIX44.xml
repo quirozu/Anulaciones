@@ -6604,6 +6604,11 @@
       <value enum="5" description="NO_WAS"/>
       <value enum="6" description="TRADE_REPORT_CANCEL"/>
       <value enum="7" description="LOCKED_IN_TRADE_BREAK"/>
+	  <value enum="14" description="ALLEGED_TRADE_REPORT_CANCEL"/>
+	  <value enum="96" description="SUBMIT_TRADE_REPORT_CANCEL"/>
+	  <value enum="97" description="ACCEPT_TRADE_REPORT_CANCEL"/>
+	  <value enum="98" description="DECLINE_TRADE_REPORT_CANCEL"/>
+	  <value enum="99" description="PENDING_TRADE_REPORT_CANCEL"/>	  
     </field>
     <field number="857" name="AllocNoOrdersType" type="INT">
       <value enum="0" description="NOT_SPECIFIED"/>

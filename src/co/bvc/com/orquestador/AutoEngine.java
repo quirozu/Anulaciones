@@ -129,7 +129,7 @@ public class AutoEngine {
 			System.out.println("************************************************************");
 			System.out.println("************************************************************");
 			System.out.println("********                                            ********");
-			System.out.println("********             COMIENZA ESCENARIO "+ idCase+     "********");
+			System.out.println("********             COMIENZA ESCENARIO "+ idCase+ "********");
 			System.out.println("********                                            ********");
 			System.out.println("************************************************************");
 			System.out.println("************************************************************");

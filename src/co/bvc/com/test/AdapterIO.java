@@ -21,6 +21,7 @@ import quickfix.UnsupportedMessageType;
 import quickfix.field.Password;
 import quickfix.field.PossDupFlag;
 import quickfix.field.Username;
+import quickfix.fix44.BusinessMessageReject;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.Logon;
 import quickfix.fix44.MessageCracker;
@@ -31,6 +32,8 @@ import quickfix.fix44.QuoteRequestReject;
 import quickfix.fix44.QuoteResponse;
 import quickfix.fix44.QuoteStatusReport;
 import quickfix.fix44.Reject;
+import quickfix.fix44.TradeCaptureReport;
+import quickfix.fix44.TradeCaptureReportAck;
 
 public class AdapterIO extends MessageCracker implements Application {
 
@@ -329,7 +332,18 @@ public class AdapterIO extends MessageCracker implements Application {
 			}
 		}
 	}
+	
+	public void onMessage(BusinessMessageReject message, SessionID sessionID) throws FieldNotFound {
+		printMessage("BusinessMessageReject", sessionID, message);
+	}
+	
+	public void onMessage(TradeCaptureReportAck message, SessionID sessionID) throws FieldNotFound {
+		printMessage("TradeCaptureReportAck", sessionID, message);
+	}
 
+	public void onMessage(TradeCaptureReport message, SessionID sessionID) throws FieldNotFound {
+		printMessage("TradeCaptureReport", sessionID, message);
+	}
 	public static void printMessage(String typeMsg, SessionID sID, Message msg) throws FieldNotFound {
 		System.out.println("********************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sID + "\nMENSAJE :"
 				+ msg + "\n----------------------------");

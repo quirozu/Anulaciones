@@ -64,10 +64,13 @@ public class CreateMessage {
 		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
 
 		String queryParties = "SELECT linea.ID_ESCENARIO, partes.RQ_PARTYID, partes.RQ_PARTYIDSOURCE, partes.RQ_PARTYROLE, partes.RECEIVER_SESSION\r\n"
-				+ "FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_rfqparty_datos partes\r\n"
+				+ "FROM bvc_automation_db_fix.aut_fix_tcr_datos linea INNER JOIN bvc_automation_db_fix.aut_fix_rfqparty_datos partes\r\n"
 				+ "	ON linea.ID_CASESEQ = partes.RFQ_IDCASE\r\n" + "WHERE linea.ID_CASESEQ ="
 				+ "1";
 //				BasicFunctions.getIdCaseSeq();
+		
+		
+		ResultSet consultTrc;
 
 		System.out.println("******************\n SECUENCIA DE ESCENARIO: "+ BasicFunctions.getIdCaseSeq() + "\n******************" );
 		
@@ -96,33 +99,29 @@ public class CreateMessage {
 	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
 			tcr.setField(new Symbol(BasicFunctions.getSymbol()));
 			tcr.setField(new SecuritySubType(BasicFunctions.getSecurityId()));
-//			tcr.setField(new NoSides(1));
-			tcr.setField(new Side(BasicFunctions.getSides()));
+			//tcr.setField(new NoSides(1));
+			noSides.set(new Side(BasicFunctions.getSides()));
 			
-			TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
 			
-			Parties parties = new Parties();
+			//TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
+			
+			//Parties parties = new Parties();
 			
 			//Parties
-			while(resultSetParties.next()) {
-				
-				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
-				parte.set(new PartyIDSource('C'));
-				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
-				
-				parties.addGroup(parte);
-				noSides.addGroup(parte);
-			}
-
-			
-
-//			tcr.addGroup(noSides);
-//			noSides.set(parties);
+//			while(resultSetParties.next()) {
+//				
+//				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
+//				parte.set(new PartyIDSource('C'));
+//				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
+//				
+//				parties.addGroup(parte);
+//				noSides.set(parties);
+//			}
+//
 			tcr.addGroup(noSides);			
 
 //			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
 					
-
 //			List<String> list = new ArrayList<String>();
 //			String idAfiliado = resultSet.getString("ID_AFILIADO");
 //			list.add(idAfiliado);
