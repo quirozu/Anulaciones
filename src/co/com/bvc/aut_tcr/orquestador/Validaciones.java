@@ -3,6 +3,7 @@ package co.com.bvc.aut_tcr.orquestador;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,41 @@ public class Validaciones {
 //                    System.out.println(claveValor.get(i));
 		}
 		return claveValor1;
+	}
+	
+	public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
+//		int contadorBuenos = 0;
+//		int contadorMalos = 0;
+//		String cadenaPrima = message.toString();
+//		
+		ResultSet resultset;
+		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ = " + datosCache.getIdCaseseq();
+		resultset = DataAccess.getQuery(queryMessageAE);
+		
+		Map <Integer, String> mapaDB = new TreeMap<Integer, String>();
+		
+		while(resultset.next()) {
+			mapaDB.put(35, resultset.getString("AR_MSGTYPE"));
+			mapaDB.put(571, resultset.getString("AR_TRADEREPID"));
+			mapaDB.put(478, resultset.getString("AR_TRADTRANTYPE"));
+			mapaDB.put(856, resultset.getString("AR_TRADEREPTYPE"));
+			mapaDB.put(939, resultset.getString("AR_TRDRPTSTATUS"));
+			mapaDB.put(17, resultset.getString("AR_EXECID"));
+			mapaDB.put(60, resultset.getString("AR_TRANSTIME"));
+		}
+		
+		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
+			Integer key = entry.getKey();
+			String value = entry.getValue();
+
+			System.out.println(key + " => DB: " + value + " MG: " + message.getString(key));
+		}
+		
+//		for (int i = 0; i < cad.size(); i++) {
+//			etiquetaFix = cad.get(i).split("=")[0];
+//			valorFix = cad.get(i).split("=")[1];
+//			switch (etiquetaFix) {
+		
 	}
 
 	public void ValidarRPrima(AutFixRfqDatosCache datosCache, Message message)

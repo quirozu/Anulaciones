@@ -11,6 +11,7 @@ import java.util.List;
 import co.com.bvc.aut_tcr.basicfix.BasicFunctions;
 import co.com.bvc.aut_tcr.basicfix.Constantes;
 import co.com.bvc.aut_tcr.basicfix.DataAccess;
+import co.com.bvc.aut_tcr.basicfix.Login;
 import co.com.bvc.aut_tcr.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
 import quickfix.Session;
@@ -63,12 +64,9 @@ public class CreateMessage {
 		
 		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
 
-		String queryParties = "SELECT linea.ID_ESCENARIO, partes.RQ_PARTYID, partes.RQ_PARTYIDSOURCE, partes.RQ_PARTYROLE, partes.RECEIVER_SESSION\r\n"
-				+ "FROM bvc_automation_db_fix.aut_fix_tcr_datos linea INNER JOIN bvc_automation_db_fix.aut_fix_rfqparty_datos partes\r\n"
-				+ "	ON linea.ID_CASESEQ = partes.RFQ_IDCASE\r\n" + "WHERE linea.ID_CASESEQ ="
-				+ "1";
-//				BasicFunctions.getIdCaseSeq();
-		
+		String queryParties = "SELECT linea.ID_ESCENARIO, partes.AE_PARTYID, partes.AE_PARTYIDSOURCE, partes.AE_PARTYROLE, partes.RECEIVER_SESSION\r\n" + 
+				"FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_tcrparty_datos partes\r\n" + 
+				"ON linea.ID_CASESEQ = partes.TCR_IDCASE WHERE linea.ID_CASESEQ = 1;";  //BasicFunctions.getIdCaseSeq();
 		
 		ResultSet consultTrc;
 

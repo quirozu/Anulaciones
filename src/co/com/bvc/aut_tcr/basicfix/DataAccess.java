@@ -59,7 +59,7 @@ public class DataAccess {
 
 	public static int getFirstIdCaseSeq(int escenarioEjecucion) throws SQLException {
 
-		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_rfq_datos" + " WHERE ID_CASE= "
+		String queryInicio = "SELECT ID_CASESEQ FROM aut_fix_tcr_datos" + " WHERE ID_CASE= "
 				+ escenarioEjecucion + " ORDER BY ID_CASESEQ ASC LIMIT 1";
 
 		ResultSet rs = DataAccess.getQuery(queryInicio);
@@ -77,7 +77,7 @@ public class DataAccess {
 
 	public static ResultSet datosMensaje(int idCaseSeq) throws SQLException {
 
-		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos WHERE ID_CASESEQ=" + idCaseSeq;
+		String queryDatos = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
 
 		return rsDatos;
@@ -85,7 +85,7 @@ public class DataAccess {
 	
 	public static ResultSet datosMensajeTrc(int idCaseSeq) throws SQLException {
 
-		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + 1;
+		String queryDatos = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ=" + 1;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
 
 		return rsDatos;
@@ -105,7 +105,7 @@ public class DataAccess {
 	public static void cargarCache(AutFixRfqDatosCache datosCache) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_fix_rfq_cache` VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO aut_fix_rfq_cache VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setString(1, datosCache.getReceiverSession());
 		ps.setInt(2, datosCache.getIdCaseseq());
 		ps.setInt(3, datosCache.getIdCase());
@@ -121,7 +121,7 @@ public class DataAccess {
 	public static AutFixRfqDatosCache obtenerCache(String sessionRec) throws SQLException, InterruptedException {
 		Thread.sleep(5000);
 		AutFixRfqDatosCache datosCache = null;
-		String queryInicio = "SELECT * FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
+		String queryInicio = "SELECT * FROM aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
 				+ "'";
 		ResultSet rs = DataAccess.getQuery(queryInicio);
 		System.out.println("RS " + rs);
@@ -148,7 +148,7 @@ public class DataAccess {
 			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO aut_log_ejecucion(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setLong(1, ID_EJECUCION);
 		ps.setString(2, idEscenario);
 		ps.setString(3, idCase);
@@ -163,7 +163,7 @@ public class DataAccess {
 	}
 
 	public static void limpiarCache() throws SQLException {
-		String strQueryLimpiar = "DELETE FROM `bvc_automation_db`.`aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
+		String strQueryLimpiar = "DELETE FROM `aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
 		setQuery(strQueryLimpiar);
 	}
 
@@ -171,7 +171,7 @@ public class DataAccess {
 			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion` (`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO `aut_log_ejecucion` (`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setLong(1, ID_EJECUCION);
 		ps.setString(2, idEscenario);
 		ps.setString(3, idCase);
@@ -187,7 +187,7 @@ public class DataAccess {
 
 	public static boolean validarContinuidadEjecucion() throws SQLException {
 
-		String query = "SELECT count(1) as cantidad FROM bvc_automation_db.aut_fix_rfq_cache";
+		String query = "SELECT count(1) as cantidad FROM aut_fix_rfq_cache";
 
 		ResultSet i = DataAccess.getQuery(query);
 		int cantidadEscenarios = 0;
@@ -211,7 +211,7 @@ public class DataAccess {
 
 		PreparedStatement ps = conn.prepareStatement(
 
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO `aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		ps.setLong(1, ID_EJECUCION);
 

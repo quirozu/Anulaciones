@@ -7,12 +7,10 @@ import java.util.Iterator;
 
 import co.com.bvc.aut_tcr.basicfix.BasicFunctions;
 import co.com.bvc.aut_tcr.basicfix.DataAccess;
+import co.com.bvc.aut_tcr.basicfix.Login;
 import co.com.bvc.aut_tcr.dao.domain.AutFixRfqDatosCache;
 import co.com.bvc.aut_tcr.dao.domain.RespuestaConstrucccionMsgFIX;
-import co.com.bvc.aut_tcr.report.CreateMessage;
 import co.com.bvc.aut_tcr.report.CreateReport;
-import co.com.bvc.aut_tcr.report.Login;
-import co.com.bvc.aut_tcr.report.Validaciones;
 import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
@@ -309,6 +307,53 @@ public class AutoEngine {
 		System.out.println("SESS: " + session);
 		return DataAccess.obtenerCache(session);
 
+	}
+
+	public void validarAE(SessionID sessionId, Message messageIn)
+			throws InterruptedException, SQLException, FieldNotFound, SessionNotFound, IOException {
+
+		System.out.println("*************************");
+		System.out.println("** INGRESA A validarAE **");
+		System.out.println("*************************");
+		// Obtener el ID_AFILIADO de la session
+//		String IdContraFirm = sessionId.toString().substring(8, 11);
+		String idContraFirm = sessionId.getSenderSubID();
+
+		// Extraer informacion
+		
+//		
+//
+//	    BasicFunctions.setTrdMatchId(messageIn.getString(880));
+//	    BasicFunctions.setLastPx(messageIn.getDouble(31));
+//	    BasicFunctions.setLastQPy(messageIn.getDouble(32));
+//	    BasicFunctions.setTransactTime(messageIn.getUtcTimeStamp(60));
+//	    BasicFunctions.setSymbol(messageIn.getString(55));
+//	    BasicFunctions.setSecuritySybType(messageIn.getString(762));
+//	    BasicFunctions.setSecurityId(messageIn.getString(48));
+//	    BasicFunctions.setSecurityIdSource(messageIn.getString(22));
+//	    BasicFunctions.setSides(messageIn.getChar(54));
+	    
+	    System.out.println(" PRUEBAS DE EXTRACCION PARA ARMADO *********************************** "+BasicFunctions.getTrdMatchId() + " lastPx " + BasicFunctions.getLastPx() + " LastQPy " + BasicFunctions.getLastQPy()
+	     + " TransactTime " + BasicFunctions.getTransactTime() + " Symbol " + BasicFunctions.getSymbol() + " SecuritySybType " + BasicFunctions.getSecuritySybType() + " SecurityId " + BasicFunctions.getSecurityId() 
+	     + " SecurityIdSource " + BasicFunctions.getSecurityIdSource()+ " Sides " + BasicFunctions.getSides() );
+	    
+		// getcache
+		AutFixRfqDatosCache datosCache = obtenerCache(idContraFirm);
+		Validaciones validaciones = new Validaciones();
+
+		validaciones.validarAR(datosCache, (quickfix.fix44.Message) messageIn);
+		Thread.sleep(5000);
+		eliminarDatoCache(idContraFirm);
+
+		if (DataAccess.validarContinuidadEjecucion()) {
+//			ejecutarSiguientePasoTcr();
+			System.out.println("** CONTINUAR ***");
+
+		} else {
+			System.out.println("**** ESPERAR ****");
+		}
+
+		System.out.println("*********** SALIENDO DE validarAE ************");
 	}
 
 	public void validarR(SessionID sessionId, Message messageIn)
