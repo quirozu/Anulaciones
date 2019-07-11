@@ -119,8 +119,9 @@ public class AutoEngine {
 			System.out.println("** INGRESA A FIX_AE_R **");
 			System.out.println("**********************");
 			
-//			respConstruccion = createMesage.createAE_R(resultSet);
-			System.out.println("INGRESA AE_R  ---- EMPEZAR A CREAR MENSAJE DE AE_R");
+			respConstruccion = createMesage.createAE_R(resultSet);
+			
+			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
 			
 			break;
 			

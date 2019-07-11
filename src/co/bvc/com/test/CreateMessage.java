@@ -48,6 +48,9 @@ import quickfix.fix44.QuoteCancel;
 import quickfix.fix44.QuoteRequest;
 import quickfix.fix44.QuoteResponse;
 import quickfix.fix44.TradeCaptureReport;
+import quickfix.fix44.TradeCaptureReportAck;
+import quickfix.fix44.TradeCaptureReportRequest;
+import quickfix.fix44.TradeCaptureReportRequestAck;
 import quickfix.fix44.Message.Header;
 
 public class CreateMessage {
@@ -65,8 +68,7 @@ public class CreateMessage {
 		ResultSet resultSetParties;
 		
 		try {
-			System.out.println("===================================>>>>>>>>>>>"+resultSet.getString("AE_SECSUBTYPE"));
-			
+						
 			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
 			LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
 			
@@ -87,8 +89,6 @@ public class CreateMessage {
 	        tcr.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
 	        tcr.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
 	        tcr.setField(new TransactTime(transactTime));
-//	        tcr.setField(new SecurityID(resultSet.getString("")));
-//	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
 			tcr.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
 			tcr.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
 			noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
@@ -102,11 +102,6 @@ public class CreateMessage {
 			list.add(contrafirm);
 			
 			respuestaMessage.setListSessiones(list);
-			
-			System.out.println("***************");
-			System.out.println("** AE CREADO  **");
-			System.out.println(tcr);
-			System.out.println("***************");
 
 			return respuestaMessage;
 
@@ -119,15 +114,35 @@ public class CreateMessage {
 	}
 	
       
-      public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) {
+      public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) throws SQLException {
     	  
     	  RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
     	  
     	  
+    	  TradeCaptureReport trcR = new TradeCaptureReport();
+          TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
     	  
+    	  DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+		  LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
+		
+		  String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE_R";
+		  TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+		  trcR.setField(tradeReportID);
+		  Header header = (Header) trcR.getHeader();
+		  header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION));
+		  trcR.setField(new TradeReportTransType(2));
+		  trcR.setField(new TradeReportType(14));
+    	  trcR.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
+    	  trcR.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+    	  trcR.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
+    	  trcR.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+    	  trcR.setField(new TransactTime(transactTime));
+    	  noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
+		  trcR.addGroup(noSides);	
     	  
+    	  respuestaMessage.setMessage(trcR);
     	  
-    	  
+    	  System.out.println("<><><><><><><><><><><><> " + respuestaMessage);
     	  
 		return respuestaMessage;
     	  
