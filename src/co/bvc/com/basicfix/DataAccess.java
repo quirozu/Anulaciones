@@ -74,7 +74,7 @@ public class DataAccess {
 		return idCaseSeq;
 	}
 	
-	public static ResultSet datosMensajeTrc(int idCaseSeq) throws SQLException {
+	public static ResultSet datosMensaje(int idCaseSeq) throws SQLException {
 
 		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);

@@ -93,9 +93,16 @@ public class CreateMessage {
 			tcr.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
 			noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
 			tcr.addGroup(noSides);			
-
 			respuestaMessage.setMessage(tcr);
-
+			
+			List<String> list = new ArrayList<String>();
+			String idAfiliado = resultSet.getString("ID_AFILIADO");
+			String contrafirm = resultSet.getString("CONTRAFIRM");
+			list.add(idAfiliado);
+			list.add(contrafirm);
+			
+			respuestaMessage.setListSessiones(list);
+			
 			System.out.println("***************");
 			System.out.println("** AE CREADO  **");
 			System.out.println(tcr);
@@ -115,6 +122,7 @@ public class CreateMessage {
       public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) {
     	  
     	  RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+    	  
     	  
     	  
     	  

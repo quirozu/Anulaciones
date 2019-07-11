@@ -214,7 +214,18 @@ public class AdapterIO extends MessageCracker implements Application {
 	
 	
 	public void onMessage(TradeCaptureReportAck message, SessionID sessionID) throws FieldNotFound {
-		printMessage("TradeCaptureReportAck", sessionID, message);
+		
+		
+		try {
+			printMessage("TradeCaptureReportAck", sessionID, message);
+			Thread.sleep(5000);
+			autoEngine.validarAR(sessionID, message);
+			
+		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 
