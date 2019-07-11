@@ -18,6 +18,7 @@ public class BasicFunctions {
 	private static String quoteIdGenered;
 	private static String quoteId;
 	private static long idEjecution;
+	private static int idCaseSeqTcr;
 	private static int idCaseSeq;
 	private static AdapterIO adapterIO;
 	private static int idCase;
@@ -39,6 +40,14 @@ public class BasicFunctions {
 	private static String securityIdSource;
 	private static char sides;
 	
+	public static int getIdCaseSeqTcr() {
+		return idCaseSeqTcr;
+	}
+
+	public static void setIdCaseSeqTcr(int idCaseSeqTcr) {
+		BasicFunctions.idCaseSeqTcr = idCaseSeqTcr;
+	}
+
 	public static char getSides() {
 		return sides;
 	}
@@ -111,7 +120,7 @@ public class BasicFunctions {
 		BasicFunctions.securityIdSource = securityIdSource;
 	}
 	
-	// 
+	// RFQ
 
 	public static int getEscenarioFinal() {
 		return escenarioFinal;
