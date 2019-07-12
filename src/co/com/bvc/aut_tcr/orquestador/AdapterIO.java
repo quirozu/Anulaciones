@@ -65,7 +65,8 @@ public class AdapterIO extends MessageCracker implements Application {
 	@Override
 	public void toAdmin(Message message, SessionID sessionId) throws FieldException {
 
-		try {
+		try {			
+			if(!(message instanceof Heartbeat)) 
 			printMessage("toAdmin - ENTRADA", sessionId, message);
 		} catch (FieldNotFound e1) {
 			e1.printStackTrace();
@@ -184,99 +185,99 @@ public class AdapterIO extends MessageCracker implements Application {
 		}		
 	}
 
-public void onMessage(QuoteRequest message, SessionID sessionId) throws FieldNotFound {
+	public void onMessage(QuoteRequest message, SessionID sessionId) throws FieldNotFound {
 		
 //		String idAfiliado = sessionId.toString().substring(8, 11);		
 //		BasicFunctions.addQuoteReqId(idAfiliado, message.getString(131));
 		
-		try {
-			printMessage("MESAJE R-PRIMA ", sessionId, message);
-			String idAfiliado = sessionId.getSenderCompID();
-			BasicFunctions.addQuoteReqId(idAfiliado, message.getString(QuoteReqID.FIELD));
-			System.out.println("\nID ESTABLECIDO EN " + BasicFunctions.getQuoteReqIdOfAfiliado(idAfiliado));
-			
-			Thread.sleep(5000);
-			autoEngine.validarR(sessionId, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (quickfix.FieldException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MESAJE R-PRIMA ", sessionId, message);
+//			String idAfiliado = sessionId.getSenderCompID();
+//			BasicFunctions.addQuoteReqId(idAfiliado, message.getString(QuoteReqID.FIELD));
+//			System.out.println("\nID ESTABLECIDO EN " + BasicFunctions.getQuoteReqIdOfAfiliado(idAfiliado));
+//			
+//			Thread.sleep(5000);
+////			autoEngine.validarR(sessionId, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (quickfix.FieldException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void onMessage(QuoteRequestReject message, SessionID sessionId) throws FieldNotFound, FieldException {
-		try {
-			printMessage("MESAJE AG ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarAG(sessionId, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FieldException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MESAJE AG ", sessionId, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarAG(sessionId, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (FieldException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void onMessage(QuoteStatusReport message, SessionID sessionId) throws FieldNotFound {
 		
-		try {
-			printMessage("MENSAJE AI ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarAI(sessionId, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FieldException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MENSAJE AI ", sessionId, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarAI(sessionId, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (FieldException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void onMessage(Quote message, SessionID sessionId) throws FieldNotFound {
 		
-		try {
-			printMessage("MENSAJE S-PRIMA  ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarS(sessionId, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FieldException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MENSAJE S-PRIMA  ", sessionId, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarS(sessionId, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (FieldException e) {
+//			e.printStackTrace();
+//		}
 	
 	}
 
 	public void onMessage(QuoteCancel message, SessionID sessionId) throws FieldNotFound {
-		try {
-			printMessage("MENSAJE Z ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarZ(sessionId, message);
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			e.printStackTrace();
-		} catch (FieldNotFound e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MENSAJE Z ", sessionId, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarZ(sessionId, message);
+//		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+//			e.printStackTrace();
+//		} catch (FieldNotFound e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void onMessage(Reject message, SessionID sessionId) {
@@ -293,19 +294,19 @@ public void onMessage(QuoteRequest message, SessionID sessionId) throws FieldNot
 	
 	public void onMessage(ExecutionReport message, SessionID sessionID) throws FieldNotFound {
 
-		try {
-			printMessage("MENSAJE ER", sessionID, message);
-			Thread.sleep(5000);
-			autoEngine.validarAJ(sessionID, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			printMessage("MENSAJE ER", sessionID, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarAJ(sessionID, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 	}
 

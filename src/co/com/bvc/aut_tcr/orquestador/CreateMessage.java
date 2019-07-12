@@ -58,26 +58,16 @@ import quickfix.fix44.Message;
 import quickfix.fix44.Message.Header;
 
 public class CreateMessage {
-
 	
-      public RespuestaConstrucccionMsgFIX createAE(ResultSet resultSet) throws FieldNotFound {
-		
+	public RespuestaConstrucccionMsgFIX createAE(ResultSet resultSet) throws FieldNotFound {
 		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
 
-		String queryParties = "SELECT linea.ID_ESCENARIO, partes.AE_PARTYID, partes.AE_PARTYIDSOURCE, partes.AE_PARTYROLE, partes.RECEIVER_SESSION\r\n" + 
-				"FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_tcrparty_datos partes\r\n" + 
-				"ON linea.ID_CASESEQ = partes.TCR_IDCASE WHERE linea.ID_CASESEQ = 1;";  //BasicFunctions.getIdCaseSeq();
-		
-		ResultSet consultTrc;
-
-		System.out.println("******************\n SECUENCIA DE ESCENARIO: "+ BasicFunctions.getIdCaseSeq() + "\n******************" );
-		
-		ResultSet resultSetParties;
-		
 		try {
-			System.out.println("*******************\n INGRESA A TRY DE CREAR EA \n**********************");
+						
+			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
+			LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
+			
 			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
-			resultSetParties = DataAccess.getQuery(queryParties);
 			
 			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
 			
@@ -87,80 +77,268 @@ public class CreateMessage {
 			tcr.setField(tradeReportID);	
 			Header header = (Header) tcr.getHeader();
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
-			tcr.setField(new TradeReportTransType(0));
-			tcr.setField(new TradeReportType(96));
-	        tcr.setField(new TrdMatchID(BasicFunctions.getTrdMatchId()));
-	        tcr.setField(new LastPx(BasicFunctions.getLastPx()));
-	        tcr.setField(new LastQty(BasicFunctions.getLastQPy()));
-	        tcr.setField(new TransactTime(BasicFunctions.getTransactTime()));
-	        tcr.setField(new SecurityID(BasicFunctions.getSecurityId()));
-	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
-			tcr.setField(new Symbol(BasicFunctions.getSymbol()));
-			tcr.setField(new SecuritySubType(BasicFunctions.getSecurityId()));
-			//tcr.setField(new NoSides(1));
-			noSides.set(new Side(BasicFunctions.getSides()));
-			
-			
-			//TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
-			
-			//Parties parties = new Parties();
-			
-			//Parties
-//			while(resultSetParties.next()) {
-//				
-//				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
-//				parte.set(new PartyIDSource('C'));
-//				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
-//				
-//				parties.addGroup(parte);
-//				noSides.set(parties);
-//			}
-//
+			tcr.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
+			tcr.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
+	        tcr.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
+	        tcr.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
+	        tcr.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+	        tcr.setField(new TransactTime(transactTime));
+			tcr.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
+			tcr.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+			noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
 			tcr.addGroup(noSides);			
-
-//			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
-					
-//			List<String> list = new ArrayList<String>();
-//			String idAfiliado = resultSet.getString("ID_AFILIADO");
-//			list.add(idAfiliado);
-//
-//			if (noRelatedSym.getInt(NoPartyIDs.FIELD) == 1) {
-//				System.out.println("\n\nPARA TODO EL MERCADO.....\n");
-//				BasicFunctions.setAllMarket(true);
-//				list.clear();
-//				Iterator<String> itSessiones = Login.getMapSessiones().keySet().iterator();
-//
-//				while (itSessiones.hasNext()) {
-//					String idAfiliadoMap = itSessiones.next();
-//					list.add(idAfiliadoMap);
-//					System.out.println("Nuevo Afiliado: " + idAfiliadoMap + " -> Session: "
-//							+ Login.getMapSessiones().get(idAfiliadoMap));
-//				}
-//				// Se asigna Session+r Para validar R prima al inicializador
-//				list.add(idAfiliado + "AE");
-//
-//			}
-
-//			tcr.addGroup(noRelatedSym);
-
 			respuestaMessage.setMessage(tcr);
-//			respuestaMessage.setListSessiones(list);
+			
+			List<String> list = new ArrayList<String>();
+			String idAfiliado = resultSet.getString("ID_AFILIADO");
+			String contrafirm = resultSet.getString("CONTRAFIRM");
+			list.add(idAfiliado);
+			list.add(contrafirm);
+			
+			respuestaMessage.setListSessiones(list);
 
-			System.out.println("***************");
-			System.out.println("** AE CREADO  **");
-			System.out.println(tcr);
-			System.out.println("***************");
-
-			System.out.println(respuestaMessage);
 			return respuestaMessage;
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 
-		return null;
+			return null;
 
 	}
+		
+	      
+	public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) throws SQLException {
+	    	  
+		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+	    	  
+		TradeCaptureReport trcR = new TradeCaptureReport();
+		TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
+		  
+		DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
+		LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
+		
+		String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE_R";
+		TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+		trcR.setField(tradeReportID);
+		Header header = (Header) trcR.getHeader();
+		header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION));
+		trcR.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
+		trcR.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
+		trcR.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
+		trcR.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
+		trcR.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+		trcR.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
+		trcR.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+		trcR.setField(new TransactTime(transactTime));
+		noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
+		trcR.addGroup(noSides);	
+		  
+		respuestaMessage.setMessage(trcR);
+		  
+		List<String> list = new ArrayList<String>();
+		String idAfiliado = resultSet.getString("ID_AFILIADO");
+		String contrafirm = resultSet.getString("CONTRAFIRM");
+		list.add(idAfiliado);
+		list.add(contrafirm);
+				
+		respuestaMessage.setListSessiones(list);
+			  
+		return respuestaMessage;
+			  
+	}
+	      
+
+//public RespuestaConstrucccionMsgFIX createAE(ResultSet resultSet) throws FieldNotFound {
+//		
+//		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+//
+//		
+////		String queryParties = "SELECT linea.ID_ESCENARIO, partes.AE_PARTYID, partes.AE_PARTYIDSOURCE, partes.AE_PARTYROLE, partes.RECEIVER_SESSION\r\n"
+////		        + "FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_tcrparty_datos partes\r\n"  
+////				+ "ON linea.ID_CASESEQ = partes.TCR_IDCASE\r\n" + "WHERE linea.ID_CASESEQ = 1"; //+ BasicFunctions.getIdCaseSeqTcr();
+////			
+////		ResultSet resultSetParties;
+////		
+//		try {
+//			System.out.println("===================================>>>>>>>>>>>"+resultSet.getString("AE_SECSUBTYPE"));
+//			
+//			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+//			LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
+//			
+//			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
+//			BasicFunctions.setReceptor(resultSet.getString("CONTRAFIRM"));
+//			
+//			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
+//			
+//			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
+//			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+//			TradeCaptureReport tcr = new TradeCaptureReport();
+//			tcr.setField(tradeReportID);	
+//			Header header = (Header) tcr.getHeader();
+//			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
+//			
+////			tcr.setField(new TradeReportTransType(0));
+////			tcr.setField(new TradeReportType(96));
+//			
+//			tcr.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE"))); 	//487
+//	        tcr.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));		//856
+//	        tcr.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));		//880
+//	        tcr.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));			//31
+//	        tcr.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));		//32
+//	        tcr.setField(new TransactTime(transactTime));		//60
+////	        tcr.setField(new SecurityID(resultSet.getString("")));
+////	        tcr.setField(new SecurityIDSource(BasicFunctions.getSecurityIdSource()));
+//			tcr.setField(new Symbol(resultSet.getString("AE_SYMBOL")));		//55
+//			tcr.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));	//762
+//			noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));	//54
+//			tcr.addGroup(noSides);		
+//
+//			respuestaMessage.setMessage(tcr);
+//			
+//			List<String> list = new ArrayList<String>();
+//			String idAfiliado = resultSet.getString("ID_AFILIADO");
+//			String contrafirm = resultSet.getString("CONTRAFIRM");
+//			
+//			list.add(idAfiliado);
+//			list.add(contrafirm);
+//			
+//			//Si la cancelación es aceptada por la contraparte 
+//			//se deben crear dos sesiones adicionales en caché para validar los ER
+//			if(resultSet.getInt("AE_TRADEREPTYPE") == 97) {
+//				list.add(idAfiliado+"ER");
+//				list.add(contrafirm+"ER");
+//			}
+//			
+//			respuestaMessage.setListSessiones(list);
+//
+//			System.out.println("***************");
+//			System.out.println("** AE CREADO  **");
+//			System.out.println(tcr);
+//			System.out.println("***************");
+//			
+////			for(String ses:list) {
+////				System.out.println("SEssion creada: "+ ses);
+////			}
+//
+//			return respuestaMessage;
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//
+//		return null;
+//
+//	}
+	
+//    public RespuestaConstrucccionMsgFIX createAE(ResultSet resultSet) throws FieldNotFound {
+//		
+//		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+//
+//		String queryParties = "SELECT linea.ID_ESCENARIO, partes.AE_PARTYID, partes.AE_PARTYIDSOURCE, partes.AE_PARTYROLE, partes.RECEIVER_SESSION\r\n" + 
+//				"FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_tcrparty_datos partes\r\n" + 
+//				"ON linea.ID_CASESEQ = partes.TCR_IDCASE WHERE linea.ID_CASESEQ = 1;";  //BasicFunctions.getIdCaseSeq();
+//		
+//		ResultSet consultTrc;
+//
+//		System.out.println("******************\n SECUENCIA DE ESCENARIO: "+ BasicFunctions.getIdCaseSeq() + "\n******************" );
+//		
+//		ResultSet resultSetParties;
+//		
+//		try {
+//			System.out.println("*******************\n INGRESA A TRY DE CREAR EA \n**********************");
+//			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
+//			resultSetParties = DataAccess.getQuery(queryParties);
+//			
+//			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
+//			
+//			String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE";
+//			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+//			TradeCaptureReport tcr = new TradeCaptureReport();
+//			tcr.setField(tradeReportID);	
+//			Header header = (Header) tcr.getHeader();
+//			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
+//			tcr.setField(new TradeReportTransType(0));
+//			tcr.setField(new TradeReportType(96));
+//			tcr.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
+//			
+//	        tcr.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
+//	        tcr.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+//	        
+//	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.0");
+//			LocalDateTime dateTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formatter);
+//			tcr.setField(new TransactTime(dateTime)); // "20190404-23:00:00";
+//	        
+//	        //tcr.setField(new TransactTime(resultSet.getString("AE_TRANSTIME")));
+//	        
+//	        //tcr.setField(new SecurityID(resultSet.getString("AE_SECID")));
+//	        tcr.setField(new SecurityIDSource(resultSet.getString("AE_SECIDSOURCE")));
+//			tcr.set(new Symbol(resultSet.getString("AE_SYMBOL")));
+//			tcr.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+//			//tcr.setField(new NoSides(1));
+//			noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
+//			
+//			
+//			//TradeCaptureReport.NoSides.NoPartyIDs parte = new TradeCaptureReport.NoSides.NoPartyIDs();
+//			
+//			//Parties parties = new Parties();
+//			
+//			//Parties
+////			while(resultSetParties.next()) {
+////				
+////				parte.set(new PartyID(resultSetParties.getString("RQ_PARTYID")));
+////				parte.set(new PartyIDSource('C'));
+////				parte.set(new PartyRole(resultSetParties.getInt("RQ_PARTYROLE")));
+////				
+////				parties.addGroup(parte);
+////				noSides.set(parties);
+////			}
+////
+//			tcr.addGroup(noSides);			
+//
+////			QuoteRequest.NoRelatedSym noRelatedSym = new QuoteRequest.NoRelatedSym();
+//					
+////			List<String> list = new ArrayList<String>();
+////			String idAfiliado = resultSet.getString("ID_AFILIADO");
+////			list.add(idAfiliado);
+////
+////			if (noRelatedSym.getInt(NoPartyIDs.FIELD) == 1) {
+////				System.out.println("\n\nPARA TODO EL MERCADO.....\n");
+////				BasicFunctions.setAllMarket(true);
+////				list.clear();
+////				Iterator<String> itSessiones = Login.getMapSessiones().keySet().iterator();
+////
+////				while (itSessiones.hasNext()) {
+////					String idAfiliadoMap = itSessiones.next();
+////					list.add(idAfiliadoMap);
+////					System.out.println("Nuevo Afiliado: " + idAfiliadoMap + " -> Session: "
+////							+ Login.getMapSessiones().get(idAfiliadoMap));
+////				}
+////				// Se asigna Session+r Para validar R prima al inicializador
+////				list.add(idAfiliado + "AE");
+////
+////			}
+//
+////			tcr.addGroup(noRelatedSym);
+//
+//			respuestaMessage.setMessage(tcr);
+////			respuestaMessage.setListSessiones(list);
+//
+//			System.out.println("***************");
+//			System.out.println("** AE CREADO  **");
+//			System.out.println(tcr);
+//			System.out.println("***************");
+//
+//			System.out.println(respuestaMessage);
+//			return respuestaMessage;
+//
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//
+//		return null;
+//
+//	}
 	
 	public RespuestaConstrucccionMsgFIX createR(ResultSet resultSet)
 			throws SessionNotFound, SQLException, FieldNotFound {
