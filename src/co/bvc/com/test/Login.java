@@ -42,57 +42,98 @@ public class Login {
 		application = BasicFunctions.getAdapterIO();
 
 		try {
-			sessionID1 = startSession(Path.PATH_CONFIG1_27.getCode());
-			if (sessionID1 == null) {
-				System.out.println("Conexion 1 errada");
-			} else {
-				Session.lookupSession(sessionID1).logon();
-				mapSessiones.put(sessionID1.getSenderCompID(), sessionID1);
-				// BasicFunctions.logon(sessionID1);
-				System.out.println("SESSION ADICIONADA. " + sessionID1.getSenderCompID() + " : " + sessionID1);
-			}
+			
+			
+//		sessionID1 = startSession(Path.PATH_CONFIG1_27.getCode());
+		sessionID1 = startSession(Path.PATH_CONFIG35_1.getCode());
+		if (sessionID1 == null) {
+			System.out.println("Conexion 1 errada");
+		} else {
+			Session.lookupSession(sessionID1).logon();
+			mapSessiones.put(sessionID1.getSenderCompID(), sessionID1);
+			System.out.println("SESSION ADICIONADA. " + sessionID1.getSenderCompID() + " : " + sessionID1);
+		}
 
-			sessionID2 = startSession(Path.PATH_CONFIG2_35.getCode());
-			if (sessionID2 == null) {
-				System.out.println("Conexion 2 errada");
-			} else {
-				Session.lookupSession(sessionID2).logon();
-//				BasicFunctions.logon(sessionID2);
-				mapSessiones.put(sessionID2.getSenderCompID(), sessionID2);
+//		sessionID2 = startSession(Path.PATH_CONFIG2_35.getCode());
+		sessionID2 = startSession(Path.PATH_CONFIG71_1.getCode());
+		if (sessionID2 == null) {
+			System.out.println("Conexion 2 errada");
+		} else {
+			Session.lookupSession(sessionID2).logon();
+			mapSessiones.put(sessionID2.getSenderCompID(), sessionID2);
+			System.out.println("SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
+		}
+		
+		sessionID3 = startSession(Path.PATH_CONFIG72_1.getCode());
+		if (sessionID3 == null) {
+			System.out.println("Conexion 1 errada");
+		} else {
+			Session.lookupSession(sessionID3).logon();
+			mapSessiones.put(sessionID3.getSenderCompID(), sessionID3);
+			System.out.println("SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
+		}
 
-				System.out.println("SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
-			}
-
-			sessionID3 = startSession(Path.PATH_CONFIG2_37.getCode());
-			if (sessionID3 == null) {
-				System.out.println("Conexion 3 errada");
-			} else {
-				Session.lookupSession(sessionID3).logon();
-				mapSessiones.put(sessionID3.getSenderCompID(), sessionID3);
-				System.out.println("SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
-			}
-
-			sessionID4 = startSession(Path.PATH_CONFIG1_19.getCode());
-			if (sessionID4 == null) {
-				System.out.println("Conexion 4 errada");
-			} else {
-				Session.lookupSession(sessionID4).logon();
-
-				mapSessiones.put(sessionID4.getSenderCompID(), sessionID4);
-
-				System.out.println("SESSION ADICIONADA. " + sessionID4.getSenderCompID() + " : " + sessionID4);
-			}
-
-			sessionID5 = startSession(Path.PATH_CONFIG1_20.getCode());
-			if (sessionID5 == null) {
-				System.out.println("Conexion 5 errada");
-			} else {
-				Session.lookupSession(sessionID5).logon();
-
-				mapSessiones.put(sessionID5.getSenderCompID(), sessionID5);
-
-				System.out.println("SESSION ADICIONADA. " + sessionID5.getSenderCompID() + " : " + sessionID5);
-			}
+		sessionID4 = startSession(Path.PATH_CONFIG73_1.getCode());
+		if (sessionID4 == null) {
+			System.out.println("Conexion 2 errada");
+		} else {
+			Session.lookupSession(sessionID4).logon();
+			mapSessiones.put(sessionID4.getSenderCompID(), sessionID4);
+			System.out.println("SESSION ADICIONADA. " + sessionID4.getSenderCompID() + " : " + sessionID4);
+		}
+			
+			//<-------------------------------------------------->
+//			sessionID1 = startSession(Path.PATH_CONFIG1_27.getCode());
+//			if (sessionID1 == null) {
+//				System.out.println("Conexion 1 errada");
+//			} else {
+//				Session.lookupSession(sessionID1).logon();
+//				mapSessiones.put(sessionID1.getSenderCompID(), sessionID1);
+//				// BasicFunctions.logon(sessionID1);
+//				System.out.println("SESSION ADICIONADA. " + sessionID1.getSenderCompID() + " : " + sessionID1);
+//			}
+//
+//			sessionID2 = startSession(Path.PATH_CONFIG2_35.getCode());
+//			if (sessionID2 == null) {
+//				System.out.println("Conexion 2 errada");
+//			} else {
+//				Session.lookupSession(sessionID2).logon();
+////				BasicFunctions.logon(sessionID2);
+//				mapSessiones.put(sessionID2.getSenderCompID(), sessionID2);
+//
+//				System.out.println("SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
+//			}
+//
+//			sessionID3 = startSession(Path.PATH_CONFIG2_37.getCode());
+//			if (sessionID3 == null) {
+//				System.out.println("Conexion 3 errada");
+//			} else {
+//				Session.lookupSession(sessionID3).logon();
+//				mapSessiones.put(sessionID3.getSenderCompID(), sessionID3);
+//				System.out.println("SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
+//			}
+//
+//			sessionID4 = startSession(Path.PATH_CONFIG1_19.getCode());
+//			if (sessionID4 == null) {
+//				System.out.println("Conexion 4 errada");
+//			} else {
+//				Session.lookupSession(sessionID4).logon();
+//
+//				mapSessiones.put(sessionID4.getSenderCompID(), sessionID4);
+//
+//				System.out.println("SESSION ADICIONADA. " + sessionID4.getSenderCompID() + " : " + sessionID4);
+//			}
+//
+//			sessionID5 = startSession(Path.PATH_CONFIG1_20.getCode());
+//			if (sessionID5 == null) {
+//				System.out.println("Conexion 5 errada");
+//			} else {
+//				Session.lookupSession(sessionID5).logon();
+//
+//				mapSessiones.put(sessionID5.getSenderCompID(), sessionID5);
+//
+//				System.out.println("SESSION ADICIONADA. " + sessionID5.getSenderCompID() + " : " + sessionID5);
+//			}
 
 			System.out.println("************************************");
 

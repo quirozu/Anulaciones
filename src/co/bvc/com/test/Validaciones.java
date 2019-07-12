@@ -84,6 +84,7 @@ public class Validaciones {
 //		String cadenaPrima = message.toString();
 //		
 		ResultSet resultset;
+		System.out.println("***************************\n " + datosCache.getIdCaseseq() + "\n***************************\n ");
 		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ = " + datosCache.getIdCaseseq();
 		resultset = DataAccess.getQuery(queryMessageAE);
 		

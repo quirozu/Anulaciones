@@ -83,8 +83,8 @@ public class CreateMessage {
 			tcr.setField(tradeReportID);	
 			Header header = (Header) tcr.getHeader();
 			header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION)); // 8
-			tcr.setField(new TradeReportTransType(0));
-			tcr.setField(new TradeReportType(96));
+			tcr.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
+			tcr.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
 	        tcr.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
 	        tcr.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
 	        tcr.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
@@ -130,8 +130,9 @@ public class CreateMessage {
 		  trcR.setField(tradeReportID);
 		  Header header = (Header) trcR.getHeader();
 		  header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION));
-		  trcR.setField(new TradeReportTransType(2));
-		  trcR.setField(new TradeReportType(14));
+		  trcR.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
+		  trcR.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
+		  trcR.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
     	  trcR.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
     	  trcR.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
     	  trcR.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
@@ -142,7 +143,13 @@ public class CreateMessage {
     	  
     	  respuestaMessage.setMessage(trcR);
     	  
-    	  System.out.println("<><><><><><><><><><><><> " + respuestaMessage);
+    	  List<String> list = new ArrayList<String>();
+		  String idAfiliado = resultSet.getString("ID_AFILIADO");
+		  String contrafirm = resultSet.getString("CONTRAFIRM");
+		  list.add(idAfiliado);
+		  list.add(contrafirm);
+			
+			respuestaMessage.setListSessiones(list);
     	  
 		return respuestaMessage;
     	  

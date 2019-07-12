@@ -11,7 +11,11 @@ public enum Path {
     PATH_CONFIG1_21("resources\\sessionSettings1_21.cfg"),
     PATH_CONFIG1_27("resources\\sessionSettings1_27.cfg"),
     PATH_CONFIG2_35("resources\\sessionSettings2_35.cfg"),
-    PATH_CONFIG2_37("resources\\sessionSettings2_37.cfg");
+    PATH_CONFIG2_37("resources\\sessionSettings2_37.cfg"),
+    PATH_CONFIG35_1("resources\\sessionSettings35_1.cfg"), 
+    PATH_CONFIG71_1("resources\\sessionSettings71_1.cfg"),
+    PATH_CONFIG73_1("resources\\sessionSettings73_1.cfg"),
+    PATH_CONFIG72_1("resources\\sessionSettings72_1.cfg");
 	
     private String code;
     Path(String code) {
