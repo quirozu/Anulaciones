@@ -109,7 +109,7 @@ public class AutoEngine {
 				
 			}
 			
-			System.out.println("MENSAJE DE ENVIADO");
+			System.out.println("MENSAJE AE ENVIADO");
 			
 			break;
 			
@@ -122,6 +122,24 @@ public class AutoEngine {
 			respConstruccion = createMesage.createAE_R(resultSet);
 			
 			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
+			
+            for(String session : respConstruccion.getListSessiones()) {
+				
+				// Construir mensaje a cache.
+				datosCache.setReceiverSession(session);
+				datosCache.setIdCaseseq(resultSet.getInt("ID_CASESEQ"));
+				datosCache.setIdCase(resultSet.getInt("ID_CASE"));
+				datosCache.setIdSecuencia(resultSet.getInt("ID_SECUENCIA"));
+				datosCache.setEstado(resultSet.getString("ESTADO"));
+				datosCache.setIdAfiliado(resultSet.getString("ID_AFILIADO"));
+				datosCache.setIdEjecucion(BasicFunctions.getIdEjecution());
+
+				cargarCache(datosCache);
+				
+			}
+            
+            System.out.println("MENSAJE AE_R ENVIADO");
+            
 			
 			break;
 			
@@ -154,6 +172,29 @@ public class AutoEngine {
 
 	}
     
+	public void validarAE(SessionID sessionId, Message message) throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+		
+		System.out.println("*************************");
+		System.out.println("** INGRESA A VALIDAR AE **");
+		System.out.println("*************************");
+		
+		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+		
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
+		
+		DataAccess.limpiarCache();
+		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			ejecutarSiguientePaso();
+			
+			System.out.println("*** CONTINUAR ***");
+		}else {
+			System.out.println("*** ESPERAR ***");
+		}	
+		
+	}
 	public void validarAR(SessionID sessionId, Message message) throws SQLException, InterruptedException, FieldNotFound, SessionNotFound, IOException {
 		
 		System.out.println("*************************");
@@ -168,10 +209,13 @@ public class AutoEngine {
 		
 		DataAccess.limpiarCache();
 		
-		ejecutarSiguientePaso();
-//		ejecutarSiguienteEscenario();
-		System.out.println("**** CONTINUAR ****");
-		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			ejecutarSiguientePaso();
+			
+			System.out.println("*** CONTINUAR ***");
+		}else {
+			System.out.println("*** ESPERAR ***");
+		}		
 		
 	}
 
@@ -213,7 +257,6 @@ public class AutoEngine {
 		ResultSet resultset = DataAccess.getQuery(query);
 		while (resultset.next()) {
 			int cas = resultset.getInt("ID_CASESEQ");
-			System.out.println("<><><><><><><><>\n " + cas + "\n<><><><><><><><>");
 			BasicFunctions.setIdCaseSeq(cas);
 			ejecutarSiguientePaso();
 		}
@@ -231,7 +274,7 @@ public class AutoEngine {
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 
 		Validaciones validaciones = new Validaciones();
-		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
+//		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
 
 		// Eliminar Registro en Cache.
 		eliminarDatoCache(sIdAfiliado);

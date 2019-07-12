@@ -134,47 +134,84 @@ public class DataAccess {
 		return datosCache;
 
 	}
-
-	public static void cargarLogsExitosos(Message message, long ID_EJECUCION, String clave, String valor,
-			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
+	
+	public static void cargarLogsExitosos(String nomEtiqueta, String clave, String valor,
+			String idEscenario, String idCase, int idSecuencia ) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		ps.setLong(1, ID_EJECUCION);
+				"INSERT INTO aut_log_ejecucion(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		ps.setLong(1, BasicFunctions.getIdEjecution());
 		ps.setString(2, idEscenario);
 		ps.setString(3, idCase);
 		ps.setInt(4, idSecuencia);
 		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 		ps.setString(6, "EXITOSO");
-		ps.setString(7, "(" + clavePrima + ") MSG: " + clave + " BD: " + valor);
+		ps.setString(7, nomEtiqueta + "(" + clave + ") => " + valor);
 		ps.setString(8, "");
 		ps.setNull(9, Types.INTEGER);
 		ps.executeUpdate();
 
 	}
 
+
+//	public static void cargarLogsExitosos(Message message, long ID_EJECUCION, String clave, String valor,
+//			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
+//
+//		PreparedStatement ps = conn.prepareStatement(
+//				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+//		ps.setLong(1, ID_EJECUCION);
+//		ps.setString(2, idEscenario);
+//		ps.setString(3, idCase);
+//		ps.setInt(4, idSecuencia);
+//		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+//		ps.setString(6, "EXITOSO");
+//		ps.setString(7, "(" + clavePrima + ") MSG: " + clave + " BD: " + valor);
+//		ps.setString(8, "");
+//		ps.setNull(9, Types.INTEGER);
+//		ps.executeUpdate();
+//
+//	}
+
 	public static void limpiarCache() throws SQLException {
 		String strQueryLimpiar = "DELETE FROM `bvc_automation_db`.`aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
 		setQuery(strQueryLimpiar);
 	}
-
-	public static void cargarLogsFallidos(Message message, long ID_EJECUCION, String clave, String valor,
-			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
+	
+	public static void cargarLogsFallidos(Message message, String nomEtiqueta, String clave, String vlMsg, String vlDb,
+			String idEscenario, String idCase, int idSecuencia) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion` (`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-		ps.setLong(1, ID_EJECUCION);
+				"INSERT INTO `aut_log_ejecucion` (`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		ps.setLong(1, BasicFunctions.getIdEjecution());
 		ps.setString(2, idEscenario);
 		ps.setString(3, idCase);
 		ps.setInt(4, idSecuencia);
 		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 		ps.setString(6, "FALLIDO");
-		ps.setString(7, "(" + clavePrima + ") MSG: " + clave + " BD: " + valor);
+		ps.setString(7, nomEtiqueta + "(" + clave + ") => MSG: " + vlMsg +", BD: " + vlDb);
 		ps.setString(8, message.toString());
 		ps.setNull(9, Types.INTEGER);
 		ps.executeUpdate();
 
 	}
+
+//	public static void cargarLogsFallidos(Message message, long ID_EJECUCION, String clave, String valor,
+//			String idEscenario, String idCase, int idSecuencia, String clavePrima) throws SQLException {
+//
+//		PreparedStatement ps = conn.prepareStatement(
+//				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion` (`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+//		ps.setLong(1, ID_EJECUCION);
+//		ps.setString(2, idEscenario);
+//		ps.setString(3, idCase);
+//		ps.setInt(4, idSecuencia);
+//		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+//		ps.setString(6, "FALLIDO");
+//		ps.setString(7, "(" + clavePrima + ") MSG: " + clave + " BD: " + valor);
+//		ps.setString(8, message.toString());
+//		ps.setNull(9, Types.INTEGER);
+//		ps.executeUpdate();
+//
+//	}
 
 	public static boolean validarContinuidadEjecucion() throws SQLException {
 
@@ -196,34 +233,46 @@ public class DataAccess {
 			return true;
 		}
 	}
-
-	public static void cargarLogs3(Message message, long ID_EJECUCION, String idEscenario, String idCase,
+	
+	
+	public static void cargarLogs3(Message message, String idEscenario, String idCase,
 			int idSecuencia) throws SQLException, FieldNotFound {
 
 		PreparedStatement ps = conn.prepareStatement(
 
-				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO `aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		ps.setLong(1, ID_EJECUCION);
-
+		ps.setLong(1, BasicFunctions.getIdEjecution());
 		ps.setString(2, idEscenario);
-
 		ps.setString(3, idCase);
-
 		ps.setInt(4, idSecuencia);
-
 		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-
 		ps.setString(6, "FALLIDO");
-
 		ps.setString(7, message.getString(58));
-
 		ps.setString(8, message.toString());
-
 		ps.setNull(9, Types.INTEGER);
-
 		ps.executeUpdate();
 
 	}
+
+//	public static void cargarLogs3(Message message, long ID_EJECUCION, String idEscenario, String idCase,
+//			int idSecuencia) throws SQLException, FieldNotFound {
+//
+//		PreparedStatement ps = conn.prepareStatement(
+//
+//				"INSERT INTO `bvc_automation_db`.`aut_log_ejecucion`(`ID_EJECUCION`, `ID_ESCENARIO`, `COD_CASO`, `ID_SECUENCIA`, `FECHA_EJECUCION`, `ESTADO_EJECUCION`, `DESCRIPCION_VALIDACION`, `MENSAJE`, `CODIGO_ERROR`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+//
+//		ps.setLong(1, ID_EJECUCION);
+//		ps.setString(2, idEscenario);
+//		ps.setString(3, idCase);
+//		ps.setInt(4, idSecuencia);
+//		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+//		ps.setString(6, "FALLIDO");
+//		ps.setString(7, message.getString(58));
+//		ps.setString(8, message.toString());
+//		ps.setNull(9, Types.INTEGER);
+//		ps.executeUpdate();
+//
+//	}
 
 }
