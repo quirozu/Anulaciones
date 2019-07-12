@@ -5,35 +5,15 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.Constantes;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
-import quickfix.SessionID;
-import quickfix.SessionNotFound;
-import quickfix.StringField;
 import quickfix.field.BeginString;
-import quickfix.field.BidSize;
-import quickfix.field.BidYield;
 import quickfix.field.LastPx;
 import quickfix.field.LastQty;
-import quickfix.field.NoPartyIDs;
-import quickfix.field.OfferSize;
-import quickfix.field.OfferYield;
-import quickfix.field.OrderQty;
-import quickfix.field.PartyID;
-import quickfix.field.PartyIDSource;
-import quickfix.field.PartyRole;
-import quickfix.field.QuoteCancelType;
-import quickfix.field.QuoteID;
-import quickfix.field.QuoteReqID;
-import quickfix.field.QuoteRespID;
-import quickfix.field.QuoteRespType;
-import quickfix.field.SecurityID;
-import quickfix.field.SecurityIDSource;
 import quickfix.field.SecuritySubType;
 import quickfix.field.Side;
 import quickfix.field.Symbol;
@@ -42,16 +22,8 @@ import quickfix.field.TradeReportTransType;
 import quickfix.field.TradeReportType;
 import quickfix.field.TransactTime;
 import quickfix.field.TrdMatchID;
-import quickfix.field.ValidUntilTime;
-import quickfix.fix44.Quote;
-import quickfix.fix44.QuoteCancel;
-import quickfix.fix44.QuoteRequest;
-import quickfix.fix44.QuoteResponse;
-import quickfix.fix44.TradeCaptureReport;
-import quickfix.fix44.TradeCaptureReportAck;
-import quickfix.fix44.TradeCaptureReportRequest;
-import quickfix.fix44.TradeCaptureReportRequestAck;
 import quickfix.fix44.Message.Header;
+import quickfix.fix44.TradeCaptureReport;
 
 public class CreateMessage {
 
@@ -69,7 +41,7 @@ public class CreateMessage {
 		
 		try {
 						
-			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 			LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
 			
 			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
@@ -122,7 +94,7 @@ public class CreateMessage {
     	  TradeCaptureReport trcR = new TradeCaptureReport();
           TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
     	  
-    	  DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+    	  DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 		  LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
 		
 		  String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE_R";
