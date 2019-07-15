@@ -3,8 +3,6 @@ package co.bvc.com.test;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.Constantes;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.orquestador.AutoEngine;
@@ -22,7 +20,6 @@ import quickfix.UnsupportedMessageType;
 import quickfix.field.MsgType;
 import quickfix.field.Password;
 import quickfix.field.PossDupFlag;
-import quickfix.field.QuoteReqID;
 import quickfix.field.Username;
 import quickfix.fix44.BusinessMessageReject;
 import quickfix.fix44.ExecutionReport;
@@ -33,7 +30,6 @@ import quickfix.fix44.Quote;
 import quickfix.fix44.QuoteCancel;
 import quickfix.fix44.QuoteRequest;
 import quickfix.fix44.QuoteRequestReject;
-import quickfix.fix44.QuoteResponse;
 import quickfix.fix44.QuoteStatusReport;
 import quickfix.fix44.QuoteStatusRequest;
 import quickfix.fix44.Reject;
@@ -223,14 +219,12 @@ public class AdapterIO extends MessageCracker implements Application {
 	
 	public void onMessage(TradeCaptureReportAck message, SessionID sessionID) throws FieldNotFound {
 		
-		
 		try {
 			printMessage("TradeCaptureReportAck", sessionID, message);
 			Thread.sleep(5000);
 			//autoEngine.validarAR(sessionID, message);
 			
 		} catch (InterruptedException e) {
-//		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
 				e.printStackTrace();
 		}
 		

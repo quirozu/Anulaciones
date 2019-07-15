@@ -225,9 +225,14 @@ public class AutoEngine {
 			}
 		} else {		
 			if(DataAccess.validarContinuidadEjecucion()) {
-				ejecutarSiguientePaso();
 				
-				System.out.println("*** CONTINUAR ***");
+				if(valueTRType == 98) {
+					ejecutarSiguienteEscenario();
+				}else {
+					ejecutarSiguientePaso();					
+					System.out.println("*** CONTINUAR ***");
+				}
+				
 			}else {
 				System.out.println("*** ESPERAR ***");
 			}

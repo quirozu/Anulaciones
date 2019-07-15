@@ -1,8 +1,5 @@
 package co.bvc.com.xstreaminet.amp;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.omxgroup.syssrv.Disposer;
 import com.omxgroup.syssrv.Trace;
 import com.omxgroup.xstream.amp.AmpTradeCancelApprove;

@@ -14,16 +14,20 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.xml.bind.ParseConversionEvent;
+
 import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.AutFixRfqDatosCache;
+import quickfix.ConfigError;
+import quickfix.DataDictionary;
 import quickfix.FieldNotFound;
 import quickfix.Message;
 
 public class Validaciones {
 
 	private static Connection conn = null;
-
+	DataDictionary dictionary = null;
 	DataAccess data = new DataAccess();
 	private String cadenaOcho;
 
@@ -54,10 +58,10 @@ public class Validaciones {
 	}
 
 	
-	public void validarAE(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
+	public void validarAE(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
-		
+		dictionary = new DataDictionary("FIX44.xml");
 		int idCase = 0;
 		int idSecuencia = 0;
 		String id_Escenario = "";
@@ -92,7 +96,9 @@ public class Validaciones {
 			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null; 
 			
-			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+//			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			String nomEtiqueta = translate(dictionary, message.getString(key));
+			
 			
 			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
 			
@@ -115,6 +121,19 @@ public class Validaciones {
 		System.out.println("LAS VALIDACIONES CORRECTAS FUERON : " + contadorBuenos);
 		System.out.println("LAS VALIDACIONES ERRADAS FUERON : " + contadorMalos);
 		System.out.println("TOTAL VALIDACIONES REALIZADAS : " + (contadorBuenos + contadorMalos));
+		
+	}
+	
+	public  String translate(DataDictionary dictionary, String tag) {
+		
+		String value = tag;
+		if (dictionary.hasFieldValue(Integer.parseInt (tag))) {
+			value = dictionary.getValueName(Integer.parseInt (tag), tag) + " (" + value + " )";
+		}
+		System.out.println(dictionary.getFieldName(Integer.parseInt (tag)) + ": " + value);
+	
+
+		return null;
 		
 	}
 	
