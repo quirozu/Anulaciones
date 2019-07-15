@@ -200,8 +200,16 @@ public class AdapterIO extends MessageCracker implements Application {
 		}
 	}
 	
-	public void onMessage(ExecutionReport message, SessionID sessionID) throws FieldNotFound {
-
+	public void onMessage(ExecutionReport message, SessionID sessionId) throws FieldNotFound {
+		try {
+			printMessage("MENSAJE ER ", sessionId, message);
+			Thread.sleep(5000);
+			autoEngine.validarER(sessionId, message);
+		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+			e.printStackTrace();
+		} catch (FieldNotFound e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onMessage(QuoteStatusRequest message, SessionID sessionID) throws FieldNotFound {
@@ -219,11 +227,11 @@ public class AdapterIO extends MessageCracker implements Application {
 		try {
 			printMessage("TradeCaptureReportAck", sessionID, message);
 			Thread.sleep(5000);
-			autoEngine.validarAR(sessionID, message);
+			//autoEngine.validarAR(sessionID, message);
 			
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (InterruptedException e) {
+//		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+				e.printStackTrace();
 		}
 		
 	}

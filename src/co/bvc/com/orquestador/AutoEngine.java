@@ -16,6 +16,7 @@ import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
+import quickfix.field.TrdMatchID;
 import quickfix.Message;
 
 public class AutoEngine {
@@ -187,20 +188,35 @@ public class AutoEngine {
 //		Validaciones validaciones = new Validaciones();
 //		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
 		
+		int valueTRType = message.isSetField(856) ? message.getInt(856) : 0;
+		
 		DataAccess.limpiarCache();
 		
-		if(DataAccess.validarContinuidadEjecucion()) {
+		if(valueTRType == 99) {
+			String trMatchId = message.getString(880);
 			
-			if(BasicFunctions.getAE_R().equalsIgnoreCase("FIX_AE_R")){
-//				TradeCancelAmp.TradeCancelAmpMain(resultSet);
-			}else {
-			ejecutarSiguientePaso();
-			System.out.println("*** CONTINUAR ***");
+			TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
+			String userInet = "su1";
+			String passInet = "";
+			
+			boolean approveBVC = tradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
+			
+			if(approveBVC) {
+				System.out.println("APROBACION EXITOSA...");
+			} else {
+				System.out.println("APROBACI�N NO EXITOSA...");
 			}
 			
-		}else {
-			System.out.println("*** ESPERAR ***");
-		}	
+			System.out.println("Aqu� va aprobaci�n de BVC...");
+		} else {		
+			if(DataAccess.validarContinuidadEjecucion()) {
+				ejecutarSiguientePaso();
+				
+				System.out.println("*** CONTINUAR ***");
+			}else {
+				System.out.println("*** ESPERAR ***");
+			}
+		}
 		
 	}
 	public void validarAR(SessionID sessionId, Message message) throws SQLException, InterruptedException, FieldNotFound, SessionNotFound, IOException {
@@ -252,6 +268,32 @@ public class AutoEngine {
 		System.out.println("** CONTINUAR ***");
 
 		System.out.println("*********** SALIENDO DE validarAG ************");
+	}
+
+	public void validarER(SessionID sessionId, Message message)
+			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+
+		System.out.println("*************************");
+		System.out.println("** INGRESA A validar ER **");
+		System.out.println("*************************");
+
+		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarER(datosCache, (quickfix.fix44.Message) message);
+
+		// Eliminar Registro en Cache.
+		DataAccess.limpiarCache();
+		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			ejecutarSiguienteEscenario();
+			
+			System.out.println("*** CONTINUAR ***");
+		}else {
+			System.out.println("*** ESPERAR ***");
+		}		
+		
+		System.out.println("*********** SALIENDO DE validarER ************");
 	}
 
 	public void ejecutarSiguienteEscenario()
