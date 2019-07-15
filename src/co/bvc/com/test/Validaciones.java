@@ -201,7 +201,7 @@ public class Validaciones {
 		String id_Escenario = "";
 		
 		ResultSet resultset;
-		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ = " + datosCache.getIdCaseseq();
+		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ = " + BasicFunctions.getIdCaseSeq();
 		
 		resultset = DataAccess.getQuery(queryMessageAE);
 		
@@ -250,21 +250,21 @@ public class Validaciones {
 		
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
-			String value = entry.getValue();
+			String valueDB = entry.getValue();
 			
 			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
 			
-			System.out.println(key + " => DB: " + value + " MG: " + message.getString(key));
+			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
 			
-			if(value.equals(message.getString(key))) {
+			if(valueDB != null && valueDB.equals(message.getString(key))) {
 				contadorBuenos++;
-				cadenaDeMensaje("securityIdSource", key.toString(), value);
+				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
 
-				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), value, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), message.getString(key), value, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), message.getString(key), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}
 			
 		}
