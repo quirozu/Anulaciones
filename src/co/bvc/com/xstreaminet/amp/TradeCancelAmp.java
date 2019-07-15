@@ -1,4 +1,4 @@
-package co.com.bvc.xstreaminet.amp;
+package co.bvc.com.xstreaminet.amp;
 
 import com.omxgroup.syssrv.Disposer;
 import com.omxgroup.syssrv.Trace;
