@@ -3,3 +3,4 @@
 /logs/
 sess*.cfg
 conexion.info
+/lib*
