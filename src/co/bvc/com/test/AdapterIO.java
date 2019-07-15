@@ -219,11 +219,11 @@ public class AdapterIO extends MessageCracker implements Application {
 		try {
 			printMessage("TradeCaptureReportAck", sessionID, message);
 			Thread.sleep(5000);
-			autoEngine.validarAR(sessionID, message);
+			//autoEngine.validarAR(sessionID, message);
 			
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (InterruptedException e) {
+//		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+				e.printStackTrace();
 		}
 		
 	}

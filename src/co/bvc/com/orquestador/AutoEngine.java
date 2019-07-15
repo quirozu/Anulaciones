@@ -184,15 +184,21 @@ public class AutoEngine {
 		Validaciones validaciones = new Validaciones();
 		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
 		
+		int valueTRType = message.isSetField(856) ? message.getInt(856) : 0;
+		
 		DataAccess.limpiarCache();
 		
-		if(DataAccess.validarContinuidadEjecucion()) {
-			ejecutarSiguientePaso();
-			
-			System.out.println("*** CONTINUAR ***");
-		}else {
-			System.out.println("*** ESPERAR ***");
-		}	
+		if(valueTRType == 99) {
+			System.out.println("Aquí va aprobación de BVC...");
+		} else {		
+			if(DataAccess.validarContinuidadEjecucion()) {
+				ejecutarSiguientePaso();
+				
+				System.out.println("*** CONTINUAR ***");
+			}else {
+				System.out.println("*** ESPERAR ***");
+			}
+		}
 		
 	}
 	public void validarAR(SessionID sessionId, Message message) throws SQLException, InterruptedException, FieldNotFound, SessionNotFound, IOException {

@@ -72,14 +72,14 @@ public class Validaciones {
 		while(resultset.next()) {
 			mapaDB.put(571, BasicFunctions.getIdEjecution()+""+datosCache.getIdCaseseq()+"_AE");
 			mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
-			mapaDB.put(856, resultset.getString("AR_TRADEREPTYPE"));
+			mapaDB.put(856, resultset.getString("AE_TRADEREPTYPE"));
 			mapaDB.put(880, resultset.getString("AE_TRMATCHID"));
 			
 			mapaDB.put(31, resultset.getString("AE_LASTPX"));
 			mapaDB.put(32, resultset.getString("AE_LASTQTY"));
 			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));
 			mapaDB.put(552, resultset.getString("AE_NOSIDES"));
-			mapaDB.put(54, resultset.getString("AE_SIDE"));
+			//mapaDB.put(54, resultset.getString("AE_SIDE"));
 
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
@@ -88,21 +88,23 @@ public class Validaciones {
 		
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
-			String value = entry.getValue();
+			String valueDB = entry.getValue();
+			
+			String valueMSG = message.isSetField(key) ? message.getString(key) : null; 
 			
 			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
 			
-			System.out.println(key + " => DB: " + value + " MG: " + message.getString(key));
+			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
 			
-			if(value.equals(message.getString(key))) {
+			if(valueDB != null && valueDB.equals(valueMSG)) {
 				contadorBuenos++;
-				cadenaDeMensaje("securityIdSource", key.toString(), value);
+				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
 
-				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), value, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), message.getString(key), value, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}
 			
 		}
@@ -156,9 +158,11 @@ public class Validaciones {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			
+			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
+			
 			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
 			
-			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
+			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
 			
 			if(valueDB.equals(message.getString(key))) {
 				contadorBuenos++;
@@ -168,7 +172,7 @@ public class Validaciones {
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), message.getString(key), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}			
 		}
 		
