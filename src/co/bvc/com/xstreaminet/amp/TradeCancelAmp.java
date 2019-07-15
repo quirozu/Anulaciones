@@ -1,5 +1,8 @@
 package co.bvc.com.xstreaminet.amp;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.omxgroup.syssrv.Disposer;
 import com.omxgroup.syssrv.Trace;
 import com.omxgroup.xstream.amp.AmpTradeCancelApprove;
@@ -24,7 +27,7 @@ public class TradeCancelAmp {
 	 * @param tradeNo
 	 * @param tradeNoSuffix
 	 */
-	public boolean tradeCancelApprove(String user, String password, String trMatchId) {
+	public static boolean tradeCancelApprove(String user, String password, String trMatchId) {
 
 		boolean respuesta = false;
 
@@ -159,3 +162,21 @@ public class TradeCancelAmp {
 	}
 	
 }
+	
+//	
+//	 public static void main(String argv[]) {
+//
+//		 TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
+//		 if (tradeCancelAmp.tradeCancelApprove("su1", "", "201907120000000006")) {
+//		 System.out.println("Ejecución Exitosa...");
+//		 } else
+//		 System.out.println("Ejecución Fallida...");
+//		 }
+//
+//		 * los parámetros a enviar son:
+//		  p1= "su1" - Constante por el momento. -- Usuario. Después lo debemos obtener de la BD - tabla AUT_USUARIO.
+//		  p2= "" - vacío Constante por el momento. .  -- Password.  Después lo debemos obtener de la BD - tabla AUT_USUARIO.
+//		  p3=  AE_TRMATCHID de la tabla aut_fix_tcr_datos. -- Nro. de Operación.
+
+	
+

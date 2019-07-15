@@ -11,6 +11,7 @@ import co.bvc.com.test.CreateMessage;
 import co.bvc.com.test.CreateReport;
 import co.bvc.com.test.Login;
 import co.bvc.com.test.Validaciones;
+import co.bvc.com.xstreaminet.amp.TradeCancelAmp;
 import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
@@ -119,6 +120,8 @@ public class AutoEngine {
 			System.out.println("** INGRESA A FIX_AE_R **");
 			System.out.println("**********************");
 			
+			BasicFunctions.setAE_R(msgType);
+			
 			respConstruccion = createMesage.createAE_R(resultSet);
 			
 			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
@@ -181,15 +184,20 @@ public class AutoEngine {
 		String sIdAfiliado = sessionId.toString().substring(8, 11);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
-		Validaciones validaciones = new Validaciones();
-		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
+//		Validaciones validaciones = new Validaciones();
+//		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
 		
 		DataAccess.limpiarCache();
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
-			ejecutarSiguientePaso();
 			
+			if(BasicFunctions.getAE_R().equalsIgnoreCase("FIX_AE_R")){
+//				TradeCancelAmp.TradeCancelAmpMain(resultSet);
+			}else {
+			ejecutarSiguientePaso();
 			System.out.println("*** CONTINUAR ***");
+			}
+			
 		}else {
 			System.out.println("*** ESPERAR ***");
 		}	
@@ -204,8 +212,8 @@ public class AutoEngine {
 		String sIdAfiliado = sessionId.toString().substring(8, 11);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
-		Validaciones validaciones = new Validaciones();
-		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
+//		Validaciones validaciones = new Validaciones();
+//		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
 		
 		DataAccess.limpiarCache();
 		

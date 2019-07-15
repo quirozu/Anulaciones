@@ -28,6 +28,8 @@ public class BasicFunctions {
 	private static int escenarioFinal;
 	private static boolean allMarket = false;
 	
+	
+	
 	// Mensaje AE
 	
 	private static String trdMatchId;
@@ -39,7 +41,18 @@ public class BasicFunctions {
 	private static String securityId;
 	private static String securityIdSource;
 	private static char sides;
+	private static String AE_R;
 	
+	
+	
+	public static String getAE_R() {
+		return AE_R;
+	}
+
+	public static void setAE_R(String aE_R) {
+		AE_R = aE_R;
+	}
+
 	public static int getIdCaseSeqTcr() {
 		return idCaseSeqTcr;
 	}
