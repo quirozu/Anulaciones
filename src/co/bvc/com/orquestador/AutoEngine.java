@@ -3,6 +3,9 @@ package co.bvc.com.orquestador;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.AutFixRfqDatosCache;
@@ -162,7 +165,7 @@ public class AutoEngine {
 	// Metodo que elimina el registro en cache (base de datos)
 	public void eliminarDatoCache(String session) throws SQLException, InterruptedException {
 
-		String queryDelete = "DELETE FROM bvc_automation_db.aut_fix_tcr_cache WHERE RECEIVER_SESSION = " + "'" + session
+		String queryDelete = "DELETE FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = " + "'" + session
 				+ "'" + ";";
 
 		DataAccess.setQuery(queryDelete);
@@ -190,24 +193,36 @@ public class AutoEngine {
 		
 		int valueTRType = message.isSetField(856) ? message.getInt(856) : 0;
 		
-		DataAccess.limpiarCache();
+		eliminarDatoCache(sIdAfiliado);
 		
 		if(valueTRType == 99) {
-			String trMatchId = message.getString(880);
-			
-			TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
-			String userInet = "su1";
-			String passInet = "";
-			
-			boolean approveBVC = tradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
-			
-			if(approveBVC) {
-				System.out.println("APROBACION EXITOSA...");
-			} else {
-				System.out.println("APROBACI�N NO EXITOSA...");
+			if (sessionId.getSenderSubID().equals(BasicFunctions.getIniciator())) {
+				String trMatchId = message.getString(880);
+				
+				TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
+				String userInet = "su1";
+				String passInet = "";
+				
+				RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+				respuestaMessage.setMessage(message);
+				
+				List<String> list = new ArrayList<String>();
+				list.add(BasicFunctions.getIniciator()+"_ER");
+				list.add(BasicFunctions.getReceptor()+"_ER");
+				
+				respuestaMessage.setListSessiones(list);
+				
+				boolean approveBVC = tradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
+				
+				if(approveBVC) {
+					System.out.println("APROBACION EXITOSA...");
+					
+				} else {
+					System.out.println("APROBACI�N NO EXITOSA...");
+				}
+				
+				System.out.println("Aqu� va aprobaci�n de BVC...");
 			}
-			
-			System.out.println("Aqu� va aprobaci�n de BVC...");
 		} else {		
 			if(DataAccess.validarContinuidadEjecucion()) {
 				ejecutarSiguientePaso();
@@ -231,7 +246,9 @@ public class AutoEngine {
 //		Validaciones validaciones = new Validaciones();
 //		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
 		
-		DataAccess.limpiarCache();
+		eliminarDatoCache(sIdAfiliado);
+		
+		//DataAccess.limpiarCache();
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
 			ejecutarSiguientePaso();
@@ -283,7 +300,8 @@ public class AutoEngine {
 		validaciones.validarER(datosCache, (quickfix.fix44.Message) message);
 
 		// Eliminar Registro en Cache.
-		DataAccess.limpiarCache();
+//		DataAccess.limpiarCache();
+		eliminarDatoCache(sIdAfiliado);
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
 			ejecutarSiguienteEscenario();
@@ -327,7 +345,7 @@ public class AutoEngine {
 //		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
 
 		// Eliminar Registro en Cache.
-		eliminarDatoCache(sIdAfiliado);
+//		eliminarDatoCache(sIdAfiliado);
 		DataAccess.limpiarCache();
 		ejecutarSiguienteEscenario();
 		System.out.println("** CONTINUAR ***");
