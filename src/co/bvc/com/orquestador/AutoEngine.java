@@ -11,10 +11,12 @@ import co.bvc.com.test.CreateMessage;
 import co.bvc.com.test.CreateReport;
 import co.bvc.com.test.Login;
 import co.bvc.com.test.Validaciones;
+import co.bvc.com.xstreaminet.amp.TradeCancelAmp;
 import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
+import quickfix.field.TrdMatchID;
 import quickfix.Message;
 
 public class AutoEngine {
@@ -189,6 +191,20 @@ public class AutoEngine {
 		DataAccess.limpiarCache();
 		
 		if(valueTRType == 99) {
+			String trMatchId = message.getString(880);
+			
+			TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
+			String userInet = "su1";
+			String passInet = "";
+			
+			boolean approveBVC = tradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
+			
+			if(approveBVC) {
+				System.out.println("APROBACION EXITOSA...");
+			} else {
+				System.out.println("APROBACIÓN NO EXITOSA...");
+			}
+			
 			System.out.println("Aquí va aprobación de BVC...");
 		} else {		
 			if(DataAccess.validarContinuidadEjecucion()) {
@@ -250,6 +266,32 @@ public class AutoEngine {
 		System.out.println("** CONTINUAR ***");
 
 		System.out.println("*********** SALIENDO DE validarAG ************");
+	}
+
+	public void validarER(SessionID sessionId, Message message)
+			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+
+		System.out.println("*************************");
+		System.out.println("** INGRESA A validar ER **");
+		System.out.println("*************************");
+
+		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarER(datosCache, (quickfix.fix44.Message) message);
+
+		// Eliminar Registro en Cache.
+		DataAccess.limpiarCache();
+		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			ejecutarSiguienteEscenario();
+			
+			System.out.println("*** CONTINUAR ***");
+		}else {
+			System.out.println("*** ESPERAR ***");
+		}		
+		
+		System.out.println("*********** SALIENDO DE validarER ************");
 	}
 
 	public void ejecutarSiguienteEscenario()
