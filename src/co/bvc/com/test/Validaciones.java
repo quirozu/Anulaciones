@@ -133,7 +133,7 @@ public class Validaciones {
 		System.out.println(dictionary.getFieldName(Integer.parseInt (tag)) + ": " + value);
 	
 
-		return null;
+		return value;
 		
 	}
 	
