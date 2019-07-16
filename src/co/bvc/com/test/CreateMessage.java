@@ -73,6 +73,12 @@ public class CreateMessage {
 			list.add(idAfiliado);
 			list.add(contrafirm);
 			
+			//Si se envía aceptación se crean dos sessiones adicionales en cache.
+			if(tcr.getString(856)=="97") {
+				list.add(idAfiliado+"_ER");
+				list.add(contrafirm+"_ER");
+			}
+			
 			respuestaMessage.setListSessiones(list);
 
 			return respuestaMessage;

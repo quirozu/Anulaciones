@@ -15,6 +15,7 @@ import co.bvc.com.test.CreateReport;
 import co.bvc.com.test.Login;
 import co.bvc.com.test.Validaciones;
 import co.bvc.com.xstreaminet.amp.TradeCancelAmp;
+import quickfix.ConfigError;
 import quickfix.FieldNotFound;
 import quickfix.Session;
 import quickfix.SessionID;
@@ -97,7 +98,6 @@ public class AutoEngine {
 			System.out.println("**********************");
 			
 			respConstruccion = createMesage.createAE(resultSet);
-			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
 			
 			for(String session : respConstruccion.getListSessiones()) {
 				
@@ -114,6 +114,8 @@ public class AutoEngine {
 				
 			}
 			
+			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
+			
 			System.out.println("MENSAJE AE ENVIADO");
 			
 			break;
@@ -128,9 +130,7 @@ public class AutoEngine {
 			
 			respConstruccion = createMesage.createAE_R(resultSet);
 			
-			Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
-			
-            for(String session : respConstruccion.getListSessiones()) {
+			for(String session : respConstruccion.getListSessiones()) {
 				
 				// Construir mensaje a cache.
 				datosCache.setReceiverSession(session);
@@ -145,8 +145,9 @@ public class AutoEngine {
 				
 			}
             
-            System.out.println("MENSAJE AE_R ENVIADO");
+            Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
             
+            System.out.println("MENSAJE AE_R ENVIADO");            
 			
 			break;
 			
@@ -179,7 +180,33 @@ public class AutoEngine {
 
 	}
     
-	public void validarAE(SessionID sessionId, Message message) throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+	public void validarAR(SessionID sessionId, Message message) throws SQLException, InterruptedException, FieldNotFound, SessionNotFound, IOException, ConfigError {
+		
+		System.out.println("**************************");
+		System.out.println("** INGRESA A VALIDAR AR **");
+		System.out.println("**************************");
+		
+		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+		
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
+		
+		eliminarDatoCache(sIdAfiliado);
+		
+		//DataAccess.limpiarCache();
+		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			System.out.println("*** CACHE VACIO. LISTO SIGUIENTE PASO ***");
+			ejecutarSiguientePaso();
+			
+		}else {
+			System.out.println("*** DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
+		}		
+		
+	}
+
+	public void validarAE(SessionID sessionId, Message message) throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound, ConfigError {
 		
 		System.out.println("*************************");
 		System.out.println("** INGRESA A VALIDAR AE **");
@@ -188,83 +215,75 @@ public class AutoEngine {
 		String sIdAfiliado = sessionId.toString().substring(8, 11);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
-//		Validaciones validaciones = new Validaciones();
-//		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarAE(datosCache, (quickfix.fix44.Message) message);
 		
 		int valueTRType = message.isSetField(856) ? message.getInt(856) : 0;
 		
 		eliminarDatoCache(sIdAfiliado);
 		
-		if(valueTRType == 99) {
-			if (sessionId.getSenderSubID().equals(BasicFunctions.getIniciator())) {
-				String trMatchId = message.getString(880);
+		//Cuando llegue el mensaje de aceptación al iniciador se dispara la aprobación por bolsa
+		if(valueTRType == 99 && sIdAfiliado.equals(BasicFunctions.getIniciator())) {
+			String trMatchId = message.getString(880);
+			
+			TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
+			String userInet = "su1";
+			String passInet = "";
+			
+//			RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+//			respuestaMessage.setMessage(message);
+//			
+//			List<String> list = new ArrayList<String>();
+//			list.add(BasicFunctions.getIniciator()+"_ER");
+//			list.add(BasicFunctions.getReceptor()+"_ER");
+//			
+//			for(String session : list) {
+//				
+//				// Construir mensaje a cache.
+//				datosCache.setReceiverSession(session);
+//				datosCache.setIdCaseseq(resultSet.getInt("ID_CASESEQ"));
+//				datosCache.setIdCase(resultSet.getInt("ID_CASE"));
+//				datosCache.setIdSecuencia(resultSet.getInt("ID_SECUENCIA"));
+//				datosCache.setEstado(resultSet.getString("ESTADO"));
+//				datosCache.setIdAfiliado(resultSet.getString("ID_AFILIADO"));
+//				datosCache.setIdEjecucion(BasicFunctions.getIdEjecution());
+//
+//				cargarCache(datosCache);
+//				
+//			}
+//            
+//			
+//			respuestaMessage.setListSessiones(list);
+			
+			boolean approveBVC = TradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
+			
+			if(approveBVC) {
+				System.out.println("APROBACION EXITOSA...");
 				
-				TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
-				String userInet = "su1";
-				String passInet = "";
-				
-				RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
-				respuestaMessage.setMessage(message);
-				
-				List<String> list = new ArrayList<String>();
-				list.add(BasicFunctions.getIniciator()+"_ER");
-				list.add(BasicFunctions.getReceptor()+"_ER");
-				
-				respuestaMessage.setListSessiones(list);
-				
-				boolean approveBVC = tradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
-				
-				if(approveBVC) {
-					System.out.println("APROBACION EXITOSA...");
-					
-				} else {
-					System.out.println("APROBACIï¿½N NO EXITOSA...");
-				}
-				
-				System.out.println("Aquï¿½ va aprobaciï¿½n de BVC...");
+			} else {
+				System.out.println("APROBACIï¿½N NO EXITOSA...");
 			}
+			
+
 		} else {		
 			if(DataAccess.validarContinuidadEjecucion()) {
 				
 				if(valueTRType == 98) {
+					System.out.println("SOLICITUD RECHAZADA... SALTA SIGUIENTE ESCENARIO");
 					ejecutarSiguienteEscenario();
 				}else {
+					System.out.println("PASA SIGUIENTE PASO");
 					ejecutarSiguientePaso();					
 					System.out.println("*** CONTINUAR ***");
 				}
 				
 			}else {
-				System.out.println("*** ESPERAR ***");
+				System.out.println("*** DATOS EN CACHE. FALTAN VALIDACIONES ***");
 			}
 		}
 		
 	}
-	public void validarAR(SessionID sessionId, Message message) throws SQLException, InterruptedException, FieldNotFound, SessionNotFound, IOException {
-		
-		System.out.println("*************************");
-		System.out.println("** INGRESA A VALIDAR AR **");
-		System.out.println("*************************");
-		
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
-		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
-		
-//		Validaciones validaciones = new Validaciones();
-//		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
-		
-		eliminarDatoCache(sIdAfiliado);
-		
-		//DataAccess.limpiarCache();
-		
-		if(DataAccess.validarContinuidadEjecucion()) {
-			ejecutarSiguientePaso();
-			
-			System.out.println("*** CONTINUAR ***");
-		}else {
-			System.out.println("*** ESPERAR ***");
-		}		
-		
-	}
-
+	
 	public static void printMessage(String typeMsg, SessionID sessionId, Message message) throws FieldNotFound {
 		System.out.println("********************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sessionId
 				+ "\nMENSAJE :" + message + "\n----------------------------");
@@ -293,11 +312,11 @@ public class AutoEngine {
 	}
 
 	public void validarER(SessionID sessionId, Message message)
-			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound, ConfigError {
 
-		System.out.println("*************************");
-		System.out.println("** INGRESA A validar ER **");
-		System.out.println("*************************");
+		System.out.println("**************************");
+		System.out.println("** INGRESA A VALIDAR ER **");
+		System.out.println("**************************");
 
 		String sIdAfiliado = sessionId.toString().substring(8, 11);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
@@ -306,14 +325,13 @@ public class AutoEngine {
 
 		// Eliminar Registro en Cache.
 //		DataAccess.limpiarCache();
-		eliminarDatoCache(sIdAfiliado);
+		eliminarDatoCache(sIdAfiliado+"_ER");
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
+			System.out.println("TERMINAN VALIDACIONES DE ER. SALTA SIGUIENTE ESCENARIO....");
 			ejecutarSiguienteEscenario();
-			
-			System.out.println("*** CONTINUAR ***");
 		}else {
-			System.out.println("*** ESPERAR ***");
+			System.out.println("*** FALTAN VALIDACIONES DE ER ***");
 		}		
 		
 		System.out.println("*********** SALIENDO DE validarER ************");
@@ -347,7 +365,7 @@ public class AutoEngine {
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 
 		Validaciones validaciones = new Validaciones();
-//		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
+		validaciones.validar3(datosCache, (quickfix.fix44.Message) messageIn);
 
 		// Eliminar Registro en Cache.
 //		eliminarDatoCache(sIdAfiliado);
