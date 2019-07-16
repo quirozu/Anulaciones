@@ -180,7 +180,6 @@ public class AdapterIO extends MessageCracker implements Application {
 		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
 			e.printStackTrace();
 		} catch (ConfigError e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -260,13 +259,14 @@ public class AdapterIO extends MessageCracker implements Application {
 			String de = msg.getHeader().getString(49);
 			String para = msg.getHeader().getString(56);
 		
-			System.out.println("***************************\n" + msgType + " - " + de + " => " + para);
+			System.out.println("***************************\n" + msgType + " - " + de + " => " + para + " FROM: " + typeMsg + " Session: " + sID);
 			System.out.println(msg);
 //		
 		} else {
 			System.out.println("TIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sID);
-			System.out.println("**************************");
 		}
+		
+		System.out.println("**************************");
 	}
 	
 	

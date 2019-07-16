@@ -115,7 +115,7 @@ public class DataAccess {
 		String queryInicio = "SELECT * FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
 				+ "'";
 		ResultSet rs = DataAccess.getQuery(queryInicio);
-		System.out.println("RS " + rs);
+//		System.out.println("RS OBTENER CACHE:" + queryInicio);
 
 		while (rs.next()) {
 			// Crea el objeto recuperado.
@@ -135,7 +135,7 @@ public class DataAccess {
 
 	}
 	
-	public static void cargarLogsExitosos(String nomEtiqueta, String clave, String valor,
+	public static void cargarLogsExitosos(String nomEtiqueta, int clave, String valor,
 			String idEscenario, String idCase, int idSecuencia ) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
@@ -177,7 +177,7 @@ public class DataAccess {
 		setQuery(strQueryLimpiar);
 	}
 	
-	public static void cargarLogsFallidos(Message message, String nomEtiqueta, String clave, String vlMsg, String vlDb,
+	public static void cargarLogsFallidos(Message message, String nomEtiqueta, int clave, String vlMsg, String vlDb,
 			String idEscenario, String idCase, int idSecuencia) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(

@@ -33,19 +33,12 @@ public class CreateMessage {
 		RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
 
 		
-		String queryParties = "SELECT linea.ID_ESCENARIO, partes.AE_PARTYID, partes.AE_PARTYIDSOURCE, partes.AE_PARTYROLE, partes.RECEIVER_SESSION\r\n"
-		        + "FROM aut_fix_tcr_datos linea INNER JOIN aut_fix_tcrparty_datos partes\r\n"  
-				+ "ON linea.ID_CASESEQ = partes.TCR_IDCASE\r\n" + "WHERE linea.ID_CASESEQ = 1"; //+ BasicFunctions.getIdCaseSeqTcr();
-			
-		ResultSet resultSetParties;
-		
 		try {
 						
 			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
 			LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
 			
 			BasicFunctions.setIniciator(resultSet.getString("ID_AFILIADO"));
-			resultSetParties = DataAccess.getQuery(queryParties);
 			
 			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
 			
@@ -90,44 +83,48 @@ public class CreateMessage {
 		return null;
 
 	}
-	
-      
-      public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) throws SQLException {
+    
+    public RespuestaConstrucccionMsgFIX createAE_R(ResultSet resultSet) throws SQLException, FieldNotFound {
     	  
-    	  RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
+    	RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
     	  
+    	TradeCaptureReport tcrR = new TradeCaptureReport();
+        TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
     	  
-    	  TradeCaptureReport trcR = new TradeCaptureReport();
-          TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
-    	  
-    	  DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
-		  LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
+    	DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
+		LocalDateTime transactTime = LocalDateTime.parse(resultSet.getString("AE_TRANSTIME"), formato);
 		
-		  String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE_R";
-		  TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
-		  trcR.setField(tradeReportID);
-		  Header header = (Header) trcR.getHeader();
-		  header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION));
-		  trcR.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
-		  trcR.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
-		  trcR.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
-    	  trcR.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
-    	  trcR.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
-    	  trcR.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
-    	  trcR.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
-    	  trcR.setField(new TransactTime(transactTime));
-    	  noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
-		  trcR.addGroup(noSides);	
+		String strTradeRepId = BasicFunctions.getIdEjecution() + resultSet.getString("ID_CASE") + "_AE_R";
+		TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
+		tcrR.setField(tradeReportID);
+		Header header = (Header) tcrR.getHeader();
+		header.setField(new BeginString(Constantes.PROTOCOL_FIX_VERSION));
+		tcrR.setField(new TradeReportTransType(resultSet.getInt("AE_TRADTRANTYPE")));
+		tcrR.setField(new TradeReportType(resultSet.getInt("AE_TRADEREPTYPE")));
+		tcrR.setField(new TrdMatchID(resultSet.getString("AE_TRMATCHID")));
+    	tcrR.setField(new Symbol(resultSet.getString("AE_SYMBOL")));
+    	tcrR.setField(new SecuritySubType(resultSet.getString("AE_SECSUBTYPE")));
+    	tcrR.setField(new LastPx(resultSet.getDouble("AE_LASTPX")));
+    	tcrR.setField(new LastQty(resultSet.getDouble("AE_LASTQTY")));
+    	tcrR.setField(new TransactTime(transactTime));
+    	noSides.set(new Side(resultSet.getString("AE_SIDE").charAt(0)));
+		tcrR.addGroup(noSides);	
     	  
-    	  respuestaMessage.setMessage(trcR);
+    	respuestaMessage.setMessage(tcrR);
     	  
-    	  List<String> list = new ArrayList<String>();
-		  String idAfiliado = resultSet.getString("ID_AFILIADO");
-		  String contrafirm = resultSet.getString("CONTRAFIRM");
-		  list.add(idAfiliado);
-		  list.add(contrafirm);
-			
-			respuestaMessage.setListSessiones(list);
+    	List<String> list = new ArrayList<String>();
+		String idAfiliado = resultSet.getString("ID_AFILIADO");
+		String contrafirm = resultSet.getString("CONTRAFIRM");
+		list.add(idAfiliado);
+		list.add(contrafirm);
+		
+		//Si se envía aceptación se crean dos sessiones adicionales en cache.
+		if(tcrR.getString(856)=="97") {
+			list.add(idAfiliado+"_ER");
+			list.add(contrafirm+"_ER");
+		}
+		
+		respuestaMessage.setListSessiones(list);
     	  
 		return respuestaMessage;
     	  

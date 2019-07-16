@@ -61,7 +61,6 @@ public class Validaciones {
 	public void validarAE(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
-		dictionary = new DataDictionary("FIX44.xml");
 		int idCase = 0;
 		int idSecuencia = 0;
 		String id_Escenario = "";
@@ -96,21 +95,19 @@ public class Validaciones {
 			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null; 
 			
-//			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
-			String nomEtiqueta = translate(key);
+			String nomEtiqueta = getNameTag(key);
 			
-			
-			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
+			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + message.getString(key));
 			
 			if(valueDB != null && valueDB.equals(valueMSG)) {
 				contadorBuenos++;
-				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
+				cadenaDeMensaje(nomEtiqueta, key, valueDB);
 
-				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}
 			
 		}
@@ -124,7 +121,7 @@ public class Validaciones {
 		
 	}
 	
-	public String translate(int tag) throws ConfigError {
+	public String getNameTag(int tag) throws ConfigError {
 		
 		DataDictionary dictionary = new DataDictionary("resources\\datadictionary\\FIX44.xml");
 		String nameTag = "";
@@ -145,8 +142,7 @@ public class Validaciones {
 		int idCase = 0;
 		int idSecuencia = 0;
 		String id_Escenario = "";
-//		String cadenaPrima = message.toString();
-		
+
 		ResultSet resultset;
 		String queryMessageAR = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ = " + datosCache.getIdCaseseq();
 		
@@ -155,20 +151,12 @@ public class Validaciones {
 		Map <Integer, String> mapaDB = new TreeMap<Integer, String>();
 		
 		while(resultset.next()) {
-//			mapaDB.put(35, resultset.getString("AR_MSGTYPE"));
-			DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyyMMdd-HH:mm:ss.SSS");
-			LocalDateTime transactTime = LocalDateTime.parse(resultset.getString("AR_TRANSTIME"), formato);
-			
-			String transTimeFormated=transactTime.getYear()+""+transactTime.getMonthValue()+""+transactTime.getDayOfMonth()+
-					"-"+transactTime.getHour()+":"+transactTime.getMinute()+":"+transactTime.getSecond()+"."+transactTime.getNano();
-			
 			mapaDB.put(571, BasicFunctions.getIdEjecution()+""+datosCache.getIdCaseseq()+"_AE");
 			mapaDB.put(487, resultset.getString("AR_TRADTRANTYPE"));
 			mapaDB.put(856, resultset.getString("AR_TRADEREPTYPE"));
 			mapaDB.put(939, resultset.getString("AR_TRDRPTSTATUS"));
-			mapaDB.put(17, resultset.getString("AR_EXECID")); //Aumenta con cada ejecuci贸n
-//			mapaDB.put(60, resultset.getString("AR_TRANSTIME"));
-			mapaDB.put(60, transTimeFormated);
+			mapaDB.put(60, resultset.getString("AR_TRANSTIME"));
+//			mapaDB.put(60, transTimeFormated);
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
 			id_Escenario = resultset.getString("ID_ESCENARIO");
@@ -180,19 +168,20 @@ public class Validaciones {
 			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
 			
-			String nomEtiqueta =  translate(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			String nomEtiqueta =  getNameTag(key);
 			
-			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
+//			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
+			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + message.getString(key));
 			
 			if(valueDB != null && valueDB.equals(message.getString(key))) {
 				contadorBuenos++;
-				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
+				cadenaDeMensaje(nomEtiqueta, key, valueDB);
 
-				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}			
 		}
 		
@@ -228,7 +217,7 @@ public class Validaciones {
 		Map <Integer, String> mapaDB = new TreeMap<Integer, String>();
 		
 		while(resultset.next()) {
-			mapaDB.put(35, resultset.getString("AE_MSGTYPE"));
+//			mapaDB.put(35, resultset.getString("AE_MSGTYPE"));
 			mapaDB.put(37, resultset.getString("AE_TRMATCHID"));
 			mapaDB.put(150, resultset.getString("ER_EXECTYPE"));
 			mapaDB.put(55, resultset.getString("AE_SYMBOL"));
@@ -272,19 +261,20 @@ public class Validaciones {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			
-			String nomEtiqueta =  translate(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			String nomEtiqueta =  getNameTag(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + message.getString(key));
 			
-			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
+//			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
 			
 			if(valueDB != null && valueDB.equals(message.getString(key))) {
 				contadorBuenos++;
-				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
+				cadenaDeMensaje(nomEtiqueta, key, valueDB);
 
-				DataAccess.cargarLogsExitosos(nomEtiqueta, key.toString(), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 				
 			} else {
 				contadorMalos++;
-				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key.toString(), message.getString(key), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, message.getString(key), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
 			}
 			
 		}
@@ -337,7 +327,7 @@ public class Validaciones {
 
 	}
 
-	public void cadenaDeMensaje(String columna, String valor, String comparar) {
-		System.out.println(columna + "(" + valor + "): " + comparar);
+	public void cadenaDeMensaje(String nomTag, int keyTag, String valueTag) {
+		System.out.println(nomTag + "(" + keyTag + "): " + valueTag);
 	}
 }
