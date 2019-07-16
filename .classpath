@@ -16,11 +16,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/amp.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/amp-src.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/asn1rt.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/syssrv.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/tsmr.jar"/>
-	<classpathentry kind="lib" path="C:/eclipse-workspace/Anulaciones/lib/xstream_api.jar"/>
+	<classpathentry kind="lib" path="lib/amp-src.jar"/>
+	<classpathentry kind="lib" path="lib/amp.jar"/>
+	<classpathentry kind="lib" path="lib/asn1rt.jar"/>
+	<classpathentry kind="lib" path="lib/syssrv.jar"/>
+	<classpathentry kind="lib" path="lib/tsmr.jar"/>
+	<classpathentry kind="lib" path="lib/xstream_api.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

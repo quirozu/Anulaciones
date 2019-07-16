@@ -97,7 +97,7 @@ public class Validaciones {
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null; 
 			
 //			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
-			String nomEtiqueta = translate(dictionary, message.getString(key));
+			String nomEtiqueta = translate(key);
 			
 			
 			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
@@ -124,20 +124,21 @@ public class Validaciones {
 		
 	}
 	
-	public  String translate(DataDictionary dictionary, String tag) {
+	public String translate(int tag) throws ConfigError {
 		
-		String value = tag;
-		if (dictionary.hasFieldValue(Integer.parseInt (tag))) {
-			value = dictionary.getValueName(Integer.parseInt (tag), tag) + " (" + value + " )";
-		}
-		System.out.println(dictionary.getFieldName(Integer.parseInt (tag)) + ": " + value);
-	
+		DataDictionary dictionary = new DataDictionary("resources\\datadictionary\\FIX44.xml");
+		String nameTag = "";
 
-		return null;
+		if (dictionary.hasFieldValue(tag)) {
+			nameTag = dictionary.getFieldName(tag);
+		}
+//		System.out.println(dictionary.getFieldName(Integer.parseInt (tag)) + ": " + value);
+
+		return nameTag;
 		
 	}
 	
-	public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
+	public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
 		
@@ -179,11 +180,11 @@ public class Validaciones {
 			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
 			
-			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			String nomEtiqueta =  translate(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
 			
 			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
 			
-			if(valueDB.equals(message.getString(key))) {
+			if(valueDB != null && valueDB.equals(message.getString(key))) {
 				contadorBuenos++;
 				cadenaDeMensaje("securityIdSource", key.toString(), valueDB);
 
@@ -211,7 +212,7 @@ public class Validaciones {
 		
 	}
 
-	public void validarER(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
+	public void validarER(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
 		
@@ -271,7 +272,7 @@ public class Validaciones {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			
-			String nomEtiqueta = "NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
+			String nomEtiqueta =  translate(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
 			
 			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
 			
@@ -317,24 +318,24 @@ public class Validaciones {
 
 	}
 	
-//	public void validar3(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
-//
-//		ResultSet resultset;
-//		String queryMessageR = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos " + "WHERE ID_CASESEQ = " 
-//				+ datosCache.getIdCaseseq();
-//
-//		resultset = DataAccess.getQuery(queryMessageR);
-//		String idEscenario = null, idCase = null;
-//
-//		while (resultset.next()) {
-//			idEscenario = resultset.getString("ID_ESCENARIO");
-//			idCase = resultset.getString("ID_CASE");
-//		}
-//
-//		DataAccess.cargarLogs3(message, datosCache.getIdEjecucion(), idEscenario, idCase, datosCache.getIdSecuencia());
-//		System.out.println("************\n SE CARGO AL LOG VALIDAR 3 \n************ ");
-//
-//	}
+	public void validar3(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound {
+
+		ResultSet resultset;
+		String queryMessageR = "SELECT * FROM bvc_automation_db.aut_fix_rfq_datos " + "WHERE ID_CASESEQ = " 
+				+ datosCache.getIdCaseseq();
+
+		resultset = DataAccess.getQuery(queryMessageR);
+		String idEscenario = null, idCase = null;
+
+		while (resultset.next()) {
+			idEscenario = resultset.getString("ID_ESCENARIO");
+			idCase = resultset.getString("ID_CASE");
+		}
+
+		DataAccess.cargarLogs3(message, idEscenario, idCase, datosCache.getIdSecuencia());
+		System.out.println("************\n SE CARGO AL LOG VALIDAR 3 \n************ ");
+
+	}
 
 	public void cadenaDeMensaje(String columna, String valor, String comparar) {
 		System.out.println(columna + "(" + valor + "): " + comparar);

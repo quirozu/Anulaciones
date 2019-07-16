@@ -7,6 +7,7 @@ import co.bvc.com.basicfix.Constantes;
 import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.orquestador.AutoEngine;
 import quickfix.Application;
+import quickfix.ConfigError;
 import quickfix.DoNotSend;
 import quickfix.FieldException;
 import quickfix.FieldNotFound;
@@ -149,7 +150,72 @@ public class AdapterIO extends MessageCracker implements Application {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void onMessage(TradeCaptureReportAck message, SessionID sessionID) throws FieldNotFound {
+		
+		try {
+			printMessage("TradeCaptureReportAck", sessionID, message);
+			Thread.sleep(5000);
+			autoEngine.validarAR(sessionID, message);
+			
+		} catch (InterruptedException e) {
+				e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (SessionNotFound e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ConfigError e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void onMessage(TradeCaptureReport message, SessionID sessionID) throws FieldNotFound {
+		try {
+			printMessage("TradeCaptureReport", sessionID, message);
+			Thread.sleep(5000);
+			autoEngine.validarAE(sessionID, message);
+		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+			e.printStackTrace();
+		} catch (ConfigError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void onMessage(ExecutionReport message, SessionID sessionId) throws FieldNotFound {
+		try {
+			printMessage("MENSAJE ER ", sessionId, message);
+			Thread.sleep(5000);
+			autoEngine.validarER(sessionId, message);
+		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+			e.printStackTrace();
+		} catch (FieldNotFound e) {
+			e.printStackTrace();
+		} catch (ConfigError e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void onMessage(Reject message, SessionID sessionId) {
+		try {
+			printMessage("MENSAJE 3 ", sessionId, message);
+			Thread.sleep(5000);
+			autoEngine.validar3(sessionId, message);
+		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
+			e.printStackTrace();
+		} catch (FieldNotFound e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void onMessage(BusinessMessageReject message, SessionID sessionID) throws FieldNotFound {
+		printMessage("BusinessMessageReject", sessionID, message);
+	}
+
 	public void onMessage(QuoteRequest message, SessionID sessionId) throws FieldNotFound {
 
 	}
@@ -184,71 +250,23 @@ public class AdapterIO extends MessageCracker implements Application {
 	
 	}
 
-	public void onMessage(Reject message, SessionID sessionId) {
-		try {
-			printMessage("MENSAJE 3 ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validar3(sessionId, message);
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			e.printStackTrace();
-		} catch (FieldNotFound e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void onMessage(ExecutionReport message, SessionID sessionId) throws FieldNotFound {
-		try {
-			printMessage("MENSAJE ER ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarER(sessionId, message);
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			e.printStackTrace();
-		} catch (FieldNotFound e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void onMessage(QuoteStatusRequest message, SessionID sessionID) throws FieldNotFound {
 		printMessage("QuoteStatusRequest", sessionID, message);
 	}
 	
-	public void onMessage(BusinessMessageReject message, SessionID sessionID) throws FieldNotFound {
-		printMessage("BusinessMessageReject", sessionID, message);
-	}
-	
-	
-	public void onMessage(TradeCaptureReportAck message, SessionID sessionID) throws FieldNotFound {
-		
-		try {
-			printMessage("TradeCaptureReportAck", sessionID, message);
-			Thread.sleep(5000);
-			//autoEngine.validarAR(sessionID, message);
-			
-		} catch (InterruptedException e) {
-				e.printStackTrace();
-		}
-		
-	}
-	
-
-	public void onMessage(TradeCaptureReport message, SessionID sessionID) throws FieldNotFound {
-		
-		
-		try {
-			printMessage("TradeCaptureReport", sessionID, message);
-			Thread.sleep(5000);
-			autoEngine.validarAE(sessionID, message);
-		} catch (SQLException | InterruptedException | SessionNotFound | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-
 	public static void printMessage(String typeMsg, SessionID sID, Message msg) throws FieldNotFound {
-		System.out.println("***************************\nTIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sID);
-		if(msg != null) System.out.println(msg);
-		System.out.println("**************************");
+		if(msg != null) {
+			String msgType = msg.getHeader().getString(35);
+			String de = msg.getHeader().getString(49);
+			String para = msg.getHeader().getString(56);
+		
+			System.out.println("***************************\n" + msgType + " - " + de + " => " + para);
+			System.out.println(msg);
+//		
+		} else {
+			System.out.println("TIPO DE MENSAJE: " + typeMsg + "- SESSION:" + sID);
+			System.out.println("**************************");
+		}
 	}
 	
 	
