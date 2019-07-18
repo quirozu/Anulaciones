@@ -53,24 +53,21 @@ public class AutoEngine {
 		
 		//Se incrementa el IdCaseSeq
 		BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
-	
-		int caso = BasicFunctions.getEscenarioFinal();
-		Thread.sleep(5000);
 //		System.out.println("ID_CASESEQ: " + BasicFunctions.getIdCaseSeq());
 		
 		ResultSet rsDatos = DataAccess.datosMensaje(BasicFunctions.getIdCaseSeq());
+		Thread.sleep(5000);
 		
 		if(rsDatos != null) {
 			while (rsDatos.next()) {
 				BasicFunctions.setIdCase(rsDatos.getInt("ID_CASE"));				
 				
-//				if (caso < BasicFunctions.getIdCase()) {
 				if (BasicFunctions.getIdCase() <= BasicFunctions.getEscenarioFinal()) {
-					System.out.print("\n**********************************\n*** INICIA REGISTRO " + BasicFunctions.getIdCaseSeq());
-					System.out.print(", ESCENARIO " + BasicFunctions.getIdCase() + "\n**********************************\n");
+					System.out.print("\n**************************************\n*** INICIA REGISTRO " + BasicFunctions.getIdCaseSeq());
+					System.out.print(", ESCENARIO " + BasicFunctions.getIdCase() + " ***\n**************************************\n");
 					
-					Thread.sleep(5000);
 					enviarMensaje(rsDatos);
+					Thread.sleep(5000);
 				} else {
 					generarReporte();
 				}
@@ -86,6 +83,8 @@ public class AutoEngine {
 	
 			String msgType = resultSet.getString("ID_ESCENARIO");
 			String idAfiliado = resultSet.getString("ID_AFILIADO");
+			String contrafirm = resultSet.getString("CONTRAFIRM");
+			
 //			String idCase = resultSet.getString("ID_CASE");
 //			System.out.println(resultSet);
 			AutFixRfqDatosCache datosCache = new AutFixRfqDatosCache();
@@ -95,9 +94,12 @@ public class AutoEngine {
 				
 			case "FIX_AE":
 				
-				System.out.println("**********************");
-				System.out.println("** INGRESA A FIX_AE **");
-				System.out.println("**********************");
+				System.out.println("**************************************");
+				System.out.println("** CREANDO MENSAJE FIX_AE INICIADOR **");
+				System.out.println("**************************************");
+				
+				BasicFunctions.setIniciator(idAfiliado);
+				BasicFunctions.setReceptor(contrafirm);
 				
 				respConstruccion = createMesage.createAE(resultSet);
 				
@@ -122,17 +124,15 @@ public class AutoEngine {
 				
 				break;
 				
-	         case "FIX_AE_R":
+	        case "FIX_AE_R":
 				
-				System.out.println("**********************");
-				System.out.println("** INGRESA A FIX_AE_R **");
-				System.out.println("**********************");
+	        	 System.out.println("*************************************");
+	        	 System.out.println("** CREANDO MENSAJE FIX_AE RECEPTOR **");
+	        	 System.out.println("*************************************");
 				
-//				BasicFunctions.setAE_R(msgType);
+	        	 respConstruccion = createMesage.createAE(resultSet);
 				
-				respConstruccion = createMesage.createAE_R(resultSet);
-				
-				for(String session : respConstruccion.getListSessiones()) {
+	        	 for(String session : respConstruccion.getListSessiones()) {
 					
 					// Construir mensaje a cache.
 					datosCache.setReceiverSession(session);
@@ -199,7 +199,9 @@ public class AutoEngine {
 		System.out.println("** INGRESA A VALIDAR AR **");
 		System.out.println("**************************");
 		
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		String sIdAfiliado = sessionId.getSenderCompID();
+		System.out.println("AFILIADO: " + sIdAfiliado);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
 		Validaciones validaciones = new Validaciones();
@@ -209,14 +211,17 @@ public class AutoEngine {
 		
 		//DataAccess.limpiarCache();
 		
-		if(DataAccess.validarContinuidadEjecucion()) {
-			System.out.println("*** CACHE VACIO. LISTO SIGUIENTE PASO ***");
-			ejecutarSiguientePaso();
-			
-		}else {
-			System.out.println("*** DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
-		}		
-		
+		if(message.isSetField(58)) {
+			DataAccess.limpiarCache();
+			ejecutarSiguienteEscenario();
+		} else {		
+			if(DataAccess.validarContinuidadEjecucion()) {
+				System.out.println("*** CACHE VACIO. LISTO SIGUIENTE PASO ***");
+				ejecutarSiguientePaso();				
+			}else {
+				System.out.println("*** DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
+			}		
+		}
 	}
 
 	public void validarAE(SessionID sessionId, Message message) throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound, ConfigError {
@@ -225,7 +230,9 @@ public class AutoEngine {
 		System.out.println("** INGRESA A VALIDAR AE **");
 		System.out.println("**************************");
 		
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		String sIdAfiliado = sessionId.getSenderCompID();
+		System.out.println("AFILIADO: " + sIdAfiliado);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
 		Validaciones validaciones = new Validaciones();
@@ -310,7 +317,8 @@ public class AutoEngine {
 		System.out.println("** INGRESA A validar AG **");
 		System.out.println("**************************");
 
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		String sIdAfiliado = sessionId.getSenderCompID();
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		Validaciones validaciones = new Validaciones();
 //		validaciones.validarAG(datosCache, (quickfix.fix44.Message) message);
@@ -331,7 +339,9 @@ public class AutoEngine {
 		System.out.println("** INGRESA A VALIDAR ER **");
 		System.out.println("**************************");
 
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		String sIdAfiliado = sessionId.getSenderCompID();
+		System.out.println("AFILIADO: " + sIdAfiliado);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		Validaciones validaciones = new Validaciones();
 		validaciones.validarER(datosCache, (quickfix.fix44.Message) message);
@@ -339,6 +349,7 @@ public class AutoEngine {
 		// Eliminar Registro en Cache.
 //		DataAccess.limpiarCache();
 		eliminarDatoCache(sIdAfiliado+"_ER");
+		Thread.sleep(5000);
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
 			System.out.println("TERMINAN VALIDACIONES DE ER. SALTA SIGUIENTE ESCENARIO....");
@@ -374,7 +385,8 @@ public class AutoEngine {
 		System.out.println("** INGRESA A VALIDAR 3 **");
 		System.out.println("*************************");
 
-		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.toString().substring(8, 11);
+		String sIdAfiliado = sessionId.getSenderCompID();
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 
 		Validaciones validaciones = new Validaciones();

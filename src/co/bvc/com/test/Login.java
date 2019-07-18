@@ -45,7 +45,7 @@ public class Login {
 			
 			
 //		sessionID1 = startSession(Path.PATH_CONFIG1_27.getCode());
-		sessionID1 = startSession(Path.PATH_CONFIG35_1.getCode());
+		sessionID1 = startSession(Path.PATH_CONFIG29_17.getCode());
 		if (sessionID1 == null) {
 			System.out.println("Conexion 1 errada");
 		} else {
@@ -55,7 +55,7 @@ public class Login {
 		}
 
 //		sessionID2 = startSession(Path.PATH_CONFIG2_35.getCode());
-		sessionID2 = startSession(Path.PATH_CONFIG71_1.getCode());
+		sessionID2 = startSession(Path.PATH_CONFIG37_18.getCode());
 		if (sessionID2 == null) {
 			System.out.println("Conexion 2 errada");
 		} else {
@@ -64,7 +64,7 @@ public class Login {
 			System.out.println("SESSION ADICIONADA. " + sessionID2.getSenderCompID() + " : " + sessionID2);
 		}
 		
-		sessionID3 = startSession(Path.PATH_CONFIG72_1.getCode());
+		sessionID3 = startSession(Path.PATH_CONFIG45_17.getCode());
 		if (sessionID3 == null) {
 			System.out.println("Conexion 1 errada");
 		} else {
@@ -73,7 +73,7 @@ public class Login {
 			System.out.println("SESSION ADICIONADA. " + sessionID3.getSenderCompID() + " : " + sessionID3);
 		}
 
-		sessionID4 = startSession(Path.PATH_CONFIG73_1.getCode());
+		sessionID4 = startSession(Path.PATH_CONFIG51_17.getCode());
 		if (sessionID4 == null) {
 			System.out.println("Conexion 2 errada");
 		} else {
