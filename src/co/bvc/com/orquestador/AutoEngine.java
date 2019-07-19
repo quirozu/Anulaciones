@@ -53,16 +53,19 @@ public class AutoEngine {
 		
 		//Se incrementa el IdCaseSeq
 		BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
-//		System.out.println("ID_CASESEQ: " + BasicFunctions.getIdCaseSeq());
+		System.out.println("ID_CASESEQ: " + BasicFunctions.getIdCaseSeq());
 		
 		ResultSet rsDatos = DataAccess.datosMensaje(BasicFunctions.getIdCaseSeq());
 		Thread.sleep(5000);
 		
 		if(rsDatos != null) {
+			System.out.println("INGRESA AL IF");
 			while (rsDatos.next()) {
+				System.out.println("INGRESA AL WHILE");
 				BasicFunctions.setIdCase(rsDatos.getInt("ID_CASE"));				
 				
 				if (BasicFunctions.getIdCase() <= BasicFunctions.getEscenarioFinal()) {
+					System.out.println("INGRESA AL IF ESCENARIOFINAL");
 					System.out.print("\n**************************************\n*** INICIA REGISTRO " + BasicFunctions.getIdCaseSeq());
 					System.out.print(", ESCENARIO " + BasicFunctions.getIdCase() + " ***\n**************************************\n");
 					
@@ -81,7 +84,7 @@ public class AutoEngine {
 	public void enviarMensaje(ResultSet resultSet)
 				throws SessionNotFound, SQLException, InterruptedException, FieldNotFound {
 	
-			String msgType = resultSet.getString("ID_ESCENARIO");
+			String idEscenario = resultSet.getString("ID_ESCENARIO");
 			String idAfiliado = resultSet.getString("ID_AFILIADO");
 			String contrafirm = resultSet.getString("CONTRAFIRM");
 			
@@ -90,7 +93,7 @@ public class AutoEngine {
 			AutFixRfqDatosCache datosCache = new AutFixRfqDatosCache();
 			RespuestaConstrucccionMsgFIX respConstruccion = new RespuestaConstrucccionMsgFIX();
 	
-			switch (msgType) {
+			switch (idEscenario) {
 				
 			case "FIX_AE":
 				
@@ -121,6 +124,8 @@ public class AutoEngine {
 				Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
 				
 				System.out.println("MENSAJE AE ENVIADO");
+				System.out.println("SESSIONES CREADAS: ");
+				DataAccess.mostrarCache();
 				
 				break;
 				
@@ -149,12 +154,16 @@ public class AutoEngine {
 	            
 	            Session.sendToTarget(respConstruccion.getMessage(), Login.getSessionOfAfiliado(idAfiliado));
 	            
-	            System.out.println("MENSAJE AE_R ENVIADO");            
+	            System.out.println("MENSAJE AE_R ENVIADO");  
+	            System.out.println("SESSIONES CREADAS: ");
+				DataAccess.mostrarCache();
+				
 				
 				break;
 				
 	
 			default:
+				System.out.println("ID_ESCENARIO ENCONTRADO: "+idEscenario);
 				break;
 			}
 	
@@ -179,10 +188,13 @@ public class AutoEngine {
 	// Metodo que elimina el registro en cache (base de datos)
 	public void eliminarDatoCache(String session) throws SQLException, InterruptedException {
 
-		String queryDelete = "DELETE FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = " + "'" + session
+		String queryDelete = "DELETE FROM aut_fix_rfq_cache WHERE RECEIVER_SESSION = " + "'" + session
 				+ "'" + ";";
+		System.out.println("QUERY BORRADO: " + queryDelete);
 
 		DataAccess.setQuery(queryDelete);
+//		Thread.sleep(2000);
+		DataAccess.mostrarCache();
 	}
 
 	// Metodo que extraer el registro en base de datos
@@ -364,15 +376,21 @@ public class AutoEngine {
 	public void ejecutarSiguienteEscenario()
 			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 
-		int sec = BasicFunctions.getIdCase();
-		sec = sec + 1;
-		System.out.println("********* " + sec);
-		String query = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos" + " WHERE ID_CASE= " + sec
+		BasicFunctions.setIdCase(BasicFunctions.getIdCase()+1);
+//		int sec = BasicFunctions.getIdCase();
+//		sec = sec + 1;
+//		System.out.println("********* " + sec);
+		String query = "SELECT * FROM aut_fix_tcr_datos" + " WHERE ID_CASE= " + BasicFunctions.getIdCase()
 				+ " ORDER BY ID_CASESEQ ASC LIMIT 1;";
+	
+		System.out.println("CONSULTA SIGUIENTE CASO: "+query);
+		
 		ResultSet resultset = DataAccess.getQuery(query);
 		while (resultset.next()) {
-			int cas = resultset.getInt("ID_CASESEQ");
-			BasicFunctions.setIdCaseSeq(cas);
+			int idCaseSeq = resultset.getInt("ID_CASESEQ");
+			
+			//El idCaseSeq se reduce en 1 porque al entrar al ejecutarSiguientePaso vuelve a incrementarlo
+			BasicFunctions.setIdCaseSeq(idCaseSeq-1);
 			ejecutarSiguientePaso();
 		}
 	}

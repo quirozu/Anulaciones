@@ -80,3 +80,59 @@
 20190718-23:25:53: Initiated logout request
 20190718-23:25:54: Received logout response
 20190718-23:25:54: Disconnecting: Received logout response
+20190719-15:27:42: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-15:27:42: Session state is not current; resetting FIX.4.4:029/029B17->EXC
+20190719-15:27:42: Created session: FIX.4.4:029/029B17->EXC
+20190719-15:27:43: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-15:27:43: MINA session created: local=/192.168.94.186:60439, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-15:27:44: Initiated logon request
+20190719-15:27:44: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-15:27:44: Received logon
+20190719-15:28:11: Initiated logout request
+20190719-15:28:13: Disconnecting: Timed out waiting for logout response
+20190719-15:59:20: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-15:59:20: Created session: FIX.4.4:029/029B17->EXC
+20190719-15:59:21: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-15:59:21: MINA session created: local=/192.168.94.186:60857, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-15:59:22: Initiated logon request
+20190719-15:59:22: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-15:59:22: Received logon
+20190719-15:59:56: Initiated logout request
+20190719-15:59:59: Disconnecting: Timed out waiting for logout response
+20190719-19:27:57: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-19:27:57: Created session: FIX.4.4:029/029B17->EXC
+20190719-19:27:58: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-19:27:58: MINA session created: local=/192.168.94.186:52555, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-19:27:59: Initiated logon request
+20190719-19:27:59: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-19:27:59: Received logon
+20190719-19:28:33: Initiated logout request
+20190719-19:28:35: Disconnecting: Timed out waiting for logout response
+20190719-19:30:23: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-19:30:23: Created session: FIX.4.4:029/029B17->EXC
+20190719-19:30:24: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-19:30:24: MINA session created: local=/192.168.94.186:52684, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-19:30:25: Initiated logon request
+20190719-19:30:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-19:30:25: Received logon
+20190719-19:30:52: Initiated logout request
+20190719-19:30:52: Received logout response
+20190719-19:30:52: Disconnecting: Received logout response
+20190719-20:12:23: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-20:12:23: Created session: FIX.4.4:029/029B17->EXC
+20190719-20:12:23: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-20:12:24: MINA session created: local=/192.168.94.186:53212, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-20:12:25: Initiated logon request
+20190719-20:12:25: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-20:12:25: Received logon
+20190719-20:12:58: Initiated logout request
+20190719-20:13:00: Disconnecting: Timed out waiting for logout response
+20190719-20:34:36: Session FIX.4.4:029/029B17->EXC schedule is daily, 00:00:00-UTC - 23:59:59-UTC
+20190719-20:34:36: Created session: FIX.4.4:029/029B17->EXC
+20190719-20:34:36: Configured socket addresses for session: [/172.36.2.21:54412]
+20190719-20:34:36: MINA session created: local=/192.168.94.186:53519, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/172.36.2.21:54412
+20190719-20:34:37: Initiated logon request
+20190719-20:34:37: Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1
+20190719-20:34:37: Received logon
+20190719-20:35:07: Initiated logout request
+20190719-20:35:10: Disconnecting: Timed out waiting for logout response
