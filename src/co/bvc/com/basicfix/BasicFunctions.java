@@ -32,26 +32,26 @@ public class BasicFunctions {
 	
 	// Mensaje AE
 	
-	private static String trdMatchId;
-	private static Double lastPx;
-	private static Double lastQPy;
-	private static LocalDateTime transactTime;
-	private static String symbol;
-	private static String securitySybType;
-	private static String securityId;
-	private static String securityIdSource;
-	private static char sides;
-	private static String AE_R;
+//	private static String trdMatchId;
+//	private static Double lastPx;
+//	private static Double lastQPy;
+//	private static LocalDateTime transactTime;
+//	private static String symbol;
+//	private static String securitySybType;
+//	private static String securityId;
+//	private static String securityIdSource;
+//	private static char sides;
+//	private static String AE_R;
 	
 	
 	
-	public static String getAE_R() {
-		return AE_R;
-	}
-
-	public static void setAE_R(String aE_R) {
-		AE_R = aE_R;
-	}
+//	public static String getAE_R() {
+//		return AE_R;
+//	}
+//
+//	public static void setAE_R(String aE_R) {
+//		AE_R = aE_R;
+//	}
 
 	public static int getIdCaseSeqTcr() {
 		return idCaseSeqTcr;
@@ -61,77 +61,77 @@ public class BasicFunctions {
 		BasicFunctions.idCaseSeqTcr = idCaseSeqTcr;
 	}
 
-	public static char getSides() {
-		return sides;
-	}
-
-	public static void setSides(char sides) {
-		BasicFunctions.sides = sides;
-	}
-
-	public static String getTrdMatchId() {
-		return trdMatchId;
-	}
-
-	public static void setTrdMatchId(String trdMatchId) {
-		BasicFunctions.trdMatchId = trdMatchId;
-	}
-
-	public static Double getLastQPy() {
-		return lastQPy;
-	}
-
-	public static void setLastQPy(Double lastQPy) {
-		BasicFunctions.lastQPy = lastQPy;
-	}
-
-	public static LocalDateTime getTransactTime() {
-		return transactTime;
-	}
-
-	public static void setTransactTime(LocalDateTime transactTime) {
-		BasicFunctions.transactTime = transactTime;
-	}
-
-	public static Double getLastPx() {
-		return lastPx;
-	}
-
-	public static void setLastPx(Double lastPx) {
-		BasicFunctions.lastPx = lastPx;
-	}
-
-	public static String getSymbol() {
-		return symbol;
-	}
-
-	public static void setSymbol(String symbol) {
-		BasicFunctions.symbol = symbol;
-	}
-
-	public static String getSecuritySybType() {
-		return securitySybType;
-	}
-
-	public static void setSecuritySybType(String securitySybType) {
-		BasicFunctions.securitySybType = securitySybType;
-	}
-
-	public static String getSecurityId() {
-		return securityId;
-	}
-
-	public static void setSecurityId(String securityId) {
-		BasicFunctions.securityId = securityId;
-	}
-
-	public static String getSecurityIdSource() {
-		return securityIdSource;
-	}
-
-	public static void setSecurityIdSource(String securityIdSource) {
-		BasicFunctions.securityIdSource = securityIdSource;
-	}
+//	public static char getSides() {
+//		return sides;
+//	}
+//
+//	public static void setSides(char sides) {
+//		BasicFunctions.sides = sides;
+//	}
+//
+//	public static String getTrdMatchId() {
+//		return trdMatchId;
+//	}
+//
+//	public static void setTrdMatchId(String trdMatchId) {
+//		BasicFunctions.trdMatchId = trdMatchId;
+//	}
+//
+//	public static Double getLastQPy() {
+//		return lastQPy;
+//	}
+//
+//	public static void setLastQPy(Double lastQPy) {
+//		BasicFunctions.lastQPy = lastQPy;
+//	}
+//
+//	public static LocalDateTime getTransactTime() {
+//		return transactTime;
+//	}
+//
+//	public static void setTransactTime(LocalDateTime transactTime) {
+//		BasicFunctions.transactTime = transactTime;
+//	}
+//
+//	public static Double getLastPx() {
+//		return lastPx;
+//	}
+//
+//	public static void setLastPx(Double lastPx) {
+//		BasicFunctions.lastPx = lastPx;
+//	}
+//
+//	public static String getSymbol() {
+//		return symbol;
+//	}
+//
+//	public static void setSymbol(String symbol) {
+//		BasicFunctions.symbol = symbol;
+//	}
+//
+//	public static String getSecuritySybType() {
+//		return securitySybType;
+//	}
+//
+//	public static void setSecuritySybType(String securitySybType) {
+//		BasicFunctions.securitySybType = securitySybType;
+//	}
+//
+//	public static String getSecurityId() {
+//		return securityId;
+//	}
+//
+//	public static void setSecurityId(String securityId) {
+//		BasicFunctions.securityId = securityId;
+//	}
+//
+//	public static String getSecurityIdSource() {
+//		return securityIdSource;
+//	}
+//
+//	public static void setSecurityIdSource(String securityIdSource) {
+//		BasicFunctions.securityIdSource = securityIdSource;
+//	}
 	
 	// RFQ
 

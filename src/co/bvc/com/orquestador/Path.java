@@ -15,6 +15,10 @@ public enum Path {
     PATH_CONFIG35_1("resources\\sessionSettings35_1.cfg"), 
     PATH_CONFIG71_1("resources\\sessionSettings71_1.cfg"),
     PATH_CONFIG73_1("resources\\sessionSettings73_1.cfg"),
+    PATH_CONFIG29_17("resources\\sessionSettings29_17.cfg"),
+    PATH_CONFIG37_18("resources\\sessionSettings37_18.cfg"),
+    PATH_CONFIG45_17("resources\\sessionSettings45_17.cfg"),
+    PATH_CONFIG51_17("resources\\sessionSettings51_17.cfg"),
     PATH_CONFIG72_1("resources\\sessionSettings72_1.cfg");
 	
     private String code;

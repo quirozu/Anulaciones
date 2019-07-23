@@ -58,7 +58,7 @@ public class DataAccess {
 
 	public static int getFirstIdCaseSeq(int escenarioEjecucion) throws SQLException {
 
-		String queryInicio = "SELECT ID_CASESEQ FROM bvc_automation_db.aut_fix_tcr_datos" + " WHERE ID_CASE= "
+		String queryInicio = "SELECT ID_CASESEQ FROM aut_fix_tcr_datos" + " WHERE ID_CASE= "
 				+ escenarioEjecucion + " ORDER BY ID_CASESEQ ASC LIMIT 1";
 
 		ResultSet rs = DataAccess.getQuery(queryInicio);
@@ -76,7 +76,7 @@ public class DataAccess {
 	
 	public static ResultSet datosMensaje(int idCaseSeq) throws SQLException {
 
-		String queryDatos = "SELECT * FROM bvc_automation_db.aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
+		String queryDatos = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASESEQ=" + idCaseSeq;
 		ResultSet rsDatos = DataAccess.getQuery(queryDatos);
 
 		return rsDatos;
@@ -96,7 +96,7 @@ public class DataAccess {
 	public static void cargarCache(AutFixRfqDatosCache datosCache) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
-				"INSERT INTO `bvc_automation_db`.`aut_fix_rfq_cache` VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+				"INSERT INTO `aut_fix_rfq_cache` VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		ps.setString(1, datosCache.getReceiverSession());
 		ps.setInt(2, datosCache.getIdCaseseq());
 		ps.setInt(3, datosCache.getIdCase());
@@ -112,11 +112,12 @@ public class DataAccess {
 	public static AutFixRfqDatosCache obtenerCache(String sessionRec) throws SQLException, InterruptedException {
 		Thread.sleep(5000);
 		AutFixRfqDatosCache datosCache = null;
-		String queryInicio = "SELECT * FROM bvc_automation_db.aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
+		String queryInicio = "SELECT * FROM aut_fix_rfq_cache WHERE RECEIVER_SESSION = '" + sessionRec
 				+ "'";
+		
+		System.out.println("RS OBTENER CACHE:" + queryInicio);
 		ResultSet rs = DataAccess.getQuery(queryInicio);
-		System.out.println("RS " + rs);
-
+		
 		while (rs.next()) {
 			// Crea el objeto recuperado.
 			datosCache = new AutFixRfqDatosCache();
@@ -135,7 +136,21 @@ public class DataAccess {
 
 	}
 	
-	public static void cargarLogsExitosos(String nomEtiqueta, String clave, String valor,
+	public static void mostrarCache() throws SQLException, InterruptedException {
+		Thread.sleep(3000);
+		
+		String queryInicio = "SELECT * FROM aut_fix_rfq_cache";
+		ResultSet rs = DataAccess.getQuery(queryInicio);
+		
+		System.out.println("Sessiones activas en cache: ");
+
+		while (rs.next()) {
+			System.out.println("SESSION: " +rs.getString("RECEIVER_SESSION") + " SECUENCIA: " + rs.getInt("ID_SECUENCIA"));
+		}
+		System.out.println("<><><><><><>-<><><><><><>");
+	}
+	
+	public static void cargarLogsExitosos(String nomEtiqueta, int clave, String valor,
 			String idEscenario, String idCase, int idSecuencia ) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
@@ -173,11 +188,11 @@ public class DataAccess {
 //	}
 
 	public static void limpiarCache() throws SQLException {
-		String strQueryLimpiar = "DELETE FROM `bvc_automation_db`.`aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
+		String strQueryLimpiar = "DELETE FROM `aut_fix_rfq_cache` WHERE  RECEIVER_SESSION <> ''";
 		setQuery(strQueryLimpiar);
 	}
 	
-	public static void cargarLogsFallidos(Message message, String nomEtiqueta, String clave, String vlMsg, String vlDb,
+	public static void cargarLogsFallidos(Message message, String nomEtiqueta, int clave, String vlMsg, String vlDb,
 			String idEscenario, String idCase, int idSecuencia) throws SQLException {
 
 		PreparedStatement ps = conn.prepareStatement(
@@ -213,9 +228,12 @@ public class DataAccess {
 //
 //	}
 
-	public static boolean validarContinuidadEjecucion() throws SQLException {
+	public static boolean validarContinuidadEjecucion() throws SQLException, InterruptedException {
 
-		String query = "SELECT count(1) as cantidad FROM bvc_automation_db.aut_fix_rfq_cache";
+		System.out.println("ENTRANDO A VALIDAR CONTINUIDAD...");
+		mostrarCache();
+//		Thread.sleep(2000);
+		String query = "SELECT count(1) as cantidad FROM aut_fix_rfq_cache";
 
 		ResultSet i = DataAccess.getQuery(query);
 		int cantidadEscenarios = 0;

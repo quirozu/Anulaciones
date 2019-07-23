@@ -20,7 +20,6 @@ public class TestFix {
 		Scanner reade = new Scanner(System. in);
 		escenarioFinal = reade.nextInt();
 		
-		
 		AutoEngine autoEngine = new AutoEngine();
 		autoEngine.iniciarEjecucion(escenarioEjecucion, escenarioFinal);	
 
