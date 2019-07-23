@@ -42,6 +42,7 @@ public class AutoEngine {
 			
 			//Se devuelve un paso porque ejecutarSiguiente lo incrementa
 //			BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() - 1);
+
 			ejecutarSiguientePaso();
 		} else {
 			System.out.println("NO HAY DATOS EN LA BASE DE DATOS...");
@@ -55,6 +56,7 @@ public class AutoEngine {
 //		BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
 		int caso = BasicFunctions.getEscenarioFinal();
 		Thread.sleep(5000);
+
 		System.out.println("ID_CASESEQ: " + BasicFunctions.getIdCaseSeq());
 		
 		ResultSet rsDatos = DataAccess.datosMensaje(BasicFunctions.getIdCaseSeq());
@@ -100,6 +102,7 @@ public class AutoEngine {
 					System.out.println("++++++++++++++++ SECUENCIA ++++++++ " + BasicFunctions.getIdCaseSeq());
 				}
 				}
+
 		} else {
 			generarReporte();
 		}
@@ -153,6 +156,7 @@ public class AutoEngine {
 				
 				break;
 				
+
 	        case "FIX_AE_R":
 				
 	        	 System.out.println("*************************************");
