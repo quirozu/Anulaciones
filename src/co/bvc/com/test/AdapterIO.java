@@ -219,23 +219,23 @@ public class AdapterIO extends MessageCracker implements Application {
 
 	}
 
-	public void onMessage(QuoteRequestReject message, SessionID sessionId) throws FieldNotFound, FieldException {
-		try {
-			printMessage("MESAJE AG ", sessionId, message);
-			Thread.sleep(5000);
-			autoEngine.validarAG(sessionId, message);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (SessionNotFound e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FieldException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void onMessage(QuoteRequestReject message, SessionID sessionId) throws FieldNotFound, FieldException {
+//		try {
+//			printMessage("MESAJE AG ", sessionId, message);
+//			Thread.sleep(5000);
+//			autoEngine.validarAG(sessionId, message);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (SessionNotFound e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (FieldException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void onMessage(QuoteStatusReport message, SessionID sessionId) throws FieldNotFound {
 		

@@ -8,9 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -22,6 +25,7 @@ import co.bvc.com.dao.domain.AutFixRfqDatosCache;
 import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.FieldNotFound;
+import quickfix.Group;
 import quickfix.Message;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
@@ -32,7 +36,7 @@ public class Validaciones {
 	DataDictionary dictionary = null;
 	DataAccess data = new DataAccess();
 	
-public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
+	public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
 		
@@ -58,7 +62,8 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 	
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
-			id_Escenario = resultset.getString("ID_ESCENARIO");
+//			id_Escenario = resultset.getString("ID_ESCENARIO");
+			id_Escenario = "FIX_AR";
 		}
 		
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
@@ -112,35 +117,6 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 		
 	}
 
-//	private String cadenaOcho;
-//
-//	public String getCadenaOcho() {
-//		return cadenaOcho;
-//	}
-//
-//	public void setCadenaOcho(String cadenaOcho) {
-//		this.cadenaOcho = cadenaOcho;
-//	}
-//
-//	public ArrayList<String> FragmentarCadena(String cadena) {
-//		ArrayList<String> claveValor = new ArrayList<String>();
-//		for (int i = 0; i < cadena.split("").length; i++) {
-//			claveValor.add(cadena.split("")[i]);
-////                    System.out.println(claveValor.get(i));
-//		}
-//		return claveValor;
-//	}
-//
-//	public ArrayList<String> FragmentarCadena1(String cadena) {
-//		ArrayList<String> claveValor1 = new ArrayList<String>();
-//		for (int i = 0; i < cadena.split("").length; i++) {
-//			claveValor1.add(cadena.split("")[i]);
-////                    System.out.println(claveValor.get(i));
-//		}
-//		return claveValor1;
-//	}
-//
-	
 	public void validarAE(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
 		int contadorMalos = 0;
@@ -153,7 +129,7 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 		
 		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASE = " + datosCache.getIdCase();
 		
-		if(idAfiliado == BasicFunctions.getIniciator()) {
+		if(idAfiliado.equals(BasicFunctions.getIniciator())) {
 			queryMessageAE += " AND ID_SECUENCIA = 1;";
 		} else {
 			queryMessageAE += " AND ID_SECUENCIA = 2;";
@@ -178,6 +154,7 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 			}
 			
 			if(datosCache.getIdSecuencia() == 1) {
+				mapaDB.put(487, "0");
 				mapaDB.put(856, resultset.getString("AE_RECTREPTYPE1"));
 				mapaDB.put(828, Integer.toString(resultset.getInt("AE_TRDTYPE")));
 				mapaDB.put(150, resultset.getString("AE_EXECTYPE"));
@@ -185,7 +162,9 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 				mapaDB.put(20102, resultset.getString("AE_DIRTYPRICE"));
 				mapaDB.put(62, resultset.getString("AE_VALIDUNTILTIME"));			
 			} else {
+				mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
 				mapaDB.put(856, resultset.getString("AE_RECTREPTYPE2"));
+				
 				if(mercado.equals("RFFON") || mercado.equals("RVFON")) {
 					//Falta crear campos en DB
 //					mapaDB.put(824, resultset.getString("AE_TRADELEGREFID"));
@@ -207,8 +186,17 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 
 			mapaDB.put(573, resultset.getString("AE_MATCHSTATUS"));
 			mapaDB.put(15, resultset.getString("AE_CURRENCY"));
-			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
-			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
+
+			SimpleDateFormat SDF = new SimpleDateFormat("yyyMMdd");
+//			long id_ejecution = Long.parseLong(SDF.format(new Date()));
+			String strSettDate = SDF.format(resultset.getString("AE_SETTDATE"));
+			String strTradeDate = SDF.format(resultset.getString("AE_SETTDATE"));
+			
+//			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
+//			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
+			mapaDB.put(64, strSettDate);
+			mapaDB.put(75, strTradeDate);
+
 			mapaDB.put(381, resultset.getString("AE_GROSSTRADEAMT"));
 			mapaDB.put(880, resultset.getString("AE_TRMATCHID"));
 			mapaDB.put(55, resultset.getString("AE_SYMBOL"));
@@ -231,38 +219,86 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
+			String valueMSG = null;
 			
-			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
+			//Si la clave se encuentra dentro del gupo NoSides
+			if(key==54 || key == 1 || key == 453 || key == 921 || key == 922) {
+				
+//				String valueMSG = message.isSetField(key) ? message.getString(key) : null;
+
+				List<Group> groupNoSides = message.getGroups(552);
+									
+				for(Group grupo:groupNoSides) {
+					valueMSG = grupo.isSetField(key) ? grupo.getString(key) : null;
+				}
+			} else valueMSG = message.isSetField(key) ? message.getString(key) : null;
 			
 			String nomEtiqueta = getNameTag(key);
 			
-//			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
 			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
 			
 			//Se compara si ninguno tiene valores nulos
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
 					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
 					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
 					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
 					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 			}
 		}
+			
+		
+		
+//		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
+//			Integer key = entry.getKey();
+//			String valueDB = entry.getValue();
+//			
+//			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
+//			
+//			String nomEtiqueta = getNameTag(key);
+//			
+////			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
+//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
+//			
+//			//Se compara si ninguno tiene valores nulos
+//			if(valueDB != null && valueMSG != null) {
+//				if(valueDB.equals(valueMSG)) {
+//					contadorBuenos++;
+//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+//					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+//				} else {
+//					contadorMalos++;
+//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+//					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+//				}
+//				
+//			} else {
+//				if (valueDB == null && valueMSG == null) {
+//					contadorBuenos++;
+//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+//					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+//				} else {
+//					contadorMalos++;
+//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+//					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+//				}
+//			}
+//		}
 		
 		System.out.println("----------------------------------------");
 		System.out.println("---------------------");
@@ -286,15 +322,13 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 		String queryMessageER = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASE = " + datosCache.getIdCase();
 		System.out.println("CONSULTA ER: "+ queryMessageER);
 		
-		if(idAfiliado == BasicFunctions.getIniciator()) {
+		if(idAfiliado.equals(BasicFunctions.getIniciator())) {
 			queryMessageER += " AND ID_SECUENCIA = 1;";
 		} else {
 			queryMessageER += " AND ID_SECUENCIA = 2;";
 		}
 		
 		System.out.println("CONSULTA ER: "+ queryMessageER);
-		
-		System.out.println("CONSULTA ER: " +  queryMessageER);
 		
 		ResultSet resultset = DataAccess.getQuery(queryMessageER);
 		
@@ -306,7 +340,7 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
 			idEscenario = resultset.getString("ID_ESCENARIO");
 			
-			mapaDB.put(37, resultset.getString("AE_TRMATCHID"));
+			mapaDB.put(37, resultset.getString("AE_TRMATCHID")); // Deberías ser AE_ORDERID que no está en DB.
 			mapaDB.put(150, resultset.getString("ER_EXECTYPE"));
 			mapaDB.put(55, resultset.getString("AE_SYMBOL"));
 			mapaDB.put(762, resultset.getString("AE_SECSUBTYPE"));
@@ -341,11 +375,12 @@ public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQ
 			}
 
 //			mapaDB.put(17, resultset.getString("AE_EXECID"));
-			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));
+			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));  //Falla porque el motor lo genera.
 			
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
-			idEscenario = resultset.getString("ID_ESCENARIO");
+			idEscenario = "FIX_8";
+//			idEscenario = resultset.getString("ID_ESCENARIO");
 		}
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();

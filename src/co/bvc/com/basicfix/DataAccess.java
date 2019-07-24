@@ -203,7 +203,7 @@ public class DataAccess {
 		ps.setInt(4, idSecuencia);
 		ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
 		ps.setString(6, "FALLIDO");
-		ps.setString(7, nomEtiqueta + "(" + clave + ") => MSG: " + vlMsg +", BD: " + vlDb);
+		ps.setString(7, nomEtiqueta + "(" + clave + ") => MSG: " + vlMsg +" - BD: " + vlDb);
 		ps.setString(8, message.toString());
 		ps.setNull(9, Types.INTEGER);
 		ps.executeUpdate();
@@ -231,23 +231,24 @@ public class DataAccess {
 	public static boolean validarContinuidadEjecucion() throws SQLException, InterruptedException {
 
 		System.out.println("ENTRANDO A VALIDAR CONTINUIDAD...");
-		mostrarCache();
-//		Thread.sleep(2000);
 		String query = "SELECT count(1) as cantidad FROM aut_fix_rfq_cache";
 
-		ResultSet i = DataAccess.getQuery(query);
+		ResultSet rs = DataAccess.getQuery(query);
+		Thread.sleep(2000);
 		int cantidadEscenarios = 0;
 
-		while (i.next()) {
-			cantidadEscenarios = i.getInt("cantidad");
+		while (rs.next()) {
+			cantidadEscenarios = rs.getInt("cantidad");
 			System.out.println(
 					"*************** CANTIDAD MENSAJES POR VALIDAR: " + cantidadEscenarios + "\n*********************");
 		}
 
 		if (cantidadEscenarios > 0) {
+			System.out.println("AUN QUEDAN ESCENARIOS POR VALIDAR");
+			mostrarCache();
 			return false;
 		} else {
-
+			System.out.println("SE FINALIZA VALIDACION DE ESCENARIOS");
 			return true;
 		}
 	}

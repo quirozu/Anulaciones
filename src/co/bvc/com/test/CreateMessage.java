@@ -42,7 +42,7 @@ public class CreateMessage {
 			
 			TradeCaptureReport.NoSides noSides = new TradeCaptureReport.NoSides();
 			
-			String strTradeRepId = BasicFunctions.getIdEjecution() + BasicFunctions.getIdCaseSeq() + "_AE";
+			String strTradeRepId = BasicFunctions.getIdEjecution() + "" + BasicFunctions.getIdCaseSeq() + "_AE";
 			TradeReportID tradeReportID = new TradeReportID(strTradeRepId);
 			TradeCaptureReport tcr = new TradeCaptureReport();
 			tcr.setField(tradeReportID);	
@@ -67,13 +67,17 @@ public class CreateMessage {
 			list.add(contrafirm);
 			
 			//Si se envía aceptación se crean dos sessiones adicionales en cache.
-			if(tcr.getString(856)=="97") {
-				list.add(idAfiliado+"_ER");
-				list.add(contrafirm+"_ER");
+			if(resultSet.getInt("AE_TRADEREPTYPE")==97) {
+				list.add(idAfiliado+"_1");
+				list.add(contrafirm+"_1");
 			}
 			
-			respuestaMessage.setListSessiones(list);
+			for(String session: list) {
+				System.out.println("SESSION: "+session);
+			}
 
+			respuestaMessage.setListSessiones(list);
+			
 			return respuestaMessage;
 
 		} catch (SQLException e) {

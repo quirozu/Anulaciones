@@ -40,7 +40,7 @@ public class TradeCancelAmp {
 		final Disposer disposer = new Disposer();
 
 		try {
-			Session session = disposer.disposes(SessionFactory.create_session("Resources/config.ini"));
+			Session session = disposer.disposes(SessionFactory.create_session("resources/config.ini"));
 
 			if (session.logon(user, password)) {
 

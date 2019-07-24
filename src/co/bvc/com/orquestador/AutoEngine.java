@@ -52,10 +52,8 @@ public class AutoEngine {
 	public void ejecutarSiguientePaso()
 			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 		
-		//Se incrementa el IdCaseSeq
-//		BasicFunctions.setIdCaseSeq(BasicFunctions.getIdCaseSeq() + 1);
 		int caso = BasicFunctions.getEscenarioFinal();
-		Thread.sleep(5000);
+//		Thread.sleep(5000);
 
 		System.out.println("ID_CASESEQ: " + BasicFunctions.getIdCaseSeq());
 		
@@ -222,7 +220,7 @@ public class AutoEngine {
 
 		DataAccess.setQuery(queryDelete);
 //		Thread.sleep(2000);
-		DataAccess.mostrarCache();
+//		DataAccess.mostrarCache();
 	}
 
 	// Metodo que extraer el registro en base de datos
@@ -244,22 +242,22 @@ public class AutoEngine {
 		System.out.println("AFILIADO: " + sIdAfiliado);
 		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
 		
-		Validaciones validaciones = new Validaciones();
-		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
-		
 		eliminarDatoCache(sIdAfiliado);
 		
-		//DataAccess.limpiarCache();
+		Validaciones validaciones = new Validaciones();
+		validaciones.validarAR(datosCache, (quickfix.fix44.Message) message);
 		
 		if(message.isSetField(58)) {
 			DataAccess.limpiarCache();
 			ejecutarSiguienteEscenario();
-		} else {		
+		} else {
+			
 			if(DataAccess.validarContinuidadEjecucion()) {
 				System.out.println("*** CACHE VACIO. LISTO SIGUIENTE PASO ***");
 				ejecutarSiguientePaso();				
 			}else {
-				System.out.println("*** DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
+				System.out.println("*** AR - DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
+				DataAccess.mostrarCache();
 			}		
 		}
 	}
@@ -286,61 +284,42 @@ public class AutoEngine {
 		if(valueTRType == 99 && sIdAfiliado.equals(BasicFunctions.getIniciator())) {
 			String trMatchId = message.getString(880);
 			
-			TradeCancelAmp tradeCancelAmp = new TradeCancelAmp();
 			String userInet = "su1";
 			String passInet = "";
-			
-//			RespuestaConstrucccionMsgFIX respuestaMessage = new RespuestaConstrucccionMsgFIX();
-//			respuestaMessage.setMessage(message);
-//			
-//			List<String> list = new ArrayList<String>();
-//			list.add(BasicFunctions.getIniciator()+"_ER");
-//			list.add(BasicFunctions.getReceptor()+"_ER");
-//			
-//			for(String session : list) {
-//				
-//				// Construir mensaje a cache.
-//				datosCache.setReceiverSession(session);
-//				datosCache.setIdCaseseq(resultSet.getInt("ID_CASESEQ"));
-//				datosCache.setIdCase(resultSet.getInt("ID_CASE"));
-//				datosCache.setIdSecuencia(resultSet.getInt("ID_SECUENCIA"));
-//				datosCache.setEstado(resultSet.getString("ESTADO"));
-//				datosCache.setIdAfiliado(resultSet.getString("ID_AFILIADO"));
-//				datosCache.setIdEjecucion(BasicFunctions.getIdEjecution());
-//
-//				cargarCache(datosCache);
-//				
-//			}
-//            
-//			
-//			respuestaMessage.setListSessiones(list);
-			
 			boolean approveBVC = TradeCancelAmp.tradeCancelApprove(userInet, passInet, trMatchId);
 			
 			if(approveBVC) {
 				System.out.println("APROBACION EXITOSA...");
-				
 			} else {
-				System.out.println("APROBACI�N NO EXITOSA...");
-			}
-			
+				System.out.println("APROBACION NO EXITOSA...");
+			}	
 
-		} else {		
-			if(DataAccess.validarContinuidadEjecucion()) {
-				
-				if(valueTRType == 98) {
-					System.out.println("SOLICITUD RECHAZADA... SALTA SIGUIENTE ESCENARIO");
-					ejecutarSiguienteEscenario();
-				}else {
-					System.out.println("PASA SIGUIENTE PASO");
-					ejecutarSiguientePaso();					
-					System.out.println("*** CONTINUAR ***");
-				}
-				
-			}else {
-				System.out.println("*** DATOS EN CACHE. FALTAN VALIDACIONES ***");
-			}
 		}
+		
+		if(valueTRType == 98) {
+			System.out.println("SOLICITUD RECHAZADA... SALTA SIGUIENTE ESCENARIO");
+		}
+		
+		if(DataAccess.validarContinuidadEjecucion()) {
+			System.out.println("*** CACHE VACIO. LISTO SIGUIENTE PASO ***");
+			ejecutarSiguientePaso();				
+		}else {
+			System.out.println("*** AE - DATOS EN CACHE. VALIDACIONES PENDIENTES ***");
+			DataAccess.mostrarCache();
+		}
+		
+//		if(DataAccess.validarContinuidadEjecucion()) {
+//				
+//				else {
+//					System.out.println("PASA SIGUIENTE PASO");
+//					ejecutarSiguientePaso();					
+//					System.out.println("*** CONTINUAR ***");
+//				}
+//				
+//			}else {
+//				System.out.println("*** AE - DATOS EN CACHE. FALTAN VALIDACIONES ***");
+//			}
+//		}
 		
 	}
 	
@@ -350,27 +329,27 @@ public class AutoEngine {
 
 	}
 
-	public void validarAG(SessionID sessionId, Message message)
-			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
-
-		System.out.println("**************************");
-		System.out.println("** INGRESA A validar AG **");
-		System.out.println("**************************");
-
-//		String sIdAfiliado = sessionId.toString().substring(8, 11);
-		String sIdAfiliado = sessionId.getSenderCompID();
-		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
-		Validaciones validaciones = new Validaciones();
-//		validaciones.validarAG(datosCache, (quickfix.fix44.Message) message);
-
-		// Eliminar Registro en Cache.
-		DataAccess.limpiarCache();
-
-		ejecutarSiguienteEscenario();
-		System.out.println("** CONTINUAR ***");
-
-		System.out.println("*********** SALIENDO DE validarAG ************");
-	}
+//	public void validarAG(SessionID sessionId, Message message)
+//			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound {
+//
+//		System.out.println("**************************");
+//		System.out.println("** INGRESA A validar AG **");
+//		System.out.println("**************************");
+//
+////		String sIdAfiliado = sessionId.toString().substring(8, 11);
+//		String sIdAfiliado = sessionId.getSenderCompID();
+//		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+//		Validaciones validaciones = new Validaciones();
+////		validaciones.validarAG(datosCache, (quickfix.fix44.Message) message);
+//
+//		// Eliminar Registro en Cache.
+//		DataAccess.limpiarCache();
+//
+//		ejecutarSiguienteEscenario();
+//		System.out.println("** CONTINUAR ***");
+//
+//		System.out.println("*********** SALIENDO DE validarAG ************");
+//	}
 
 	public void validarER(SessionID sessionId, Message message)
 			throws SQLException, InterruptedException, SessionNotFound, IOException, FieldNotFound, ConfigError {
@@ -382,14 +361,14 @@ public class AutoEngine {
 //		String sIdAfiliado = sessionId.toString().substring(8, 11);
 		String sIdAfiliado = sessionId.getSenderCompID();
 		System.out.println("AFILIADO: " + sIdAfiliado);
-		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado);
+		AutFixRfqDatosCache datosCache = obtenerCache(sIdAfiliado+"_1");
 		Validaciones validaciones = new Validaciones();
 		validaciones.validarER(datosCache, (quickfix.fix44.Message) message);
 
 		// Eliminar Registro en Cache.
 //		DataAccess.limpiarCache();
-		eliminarDatoCache(sIdAfiliado+"_ER");
-		Thread.sleep(5000);
+		eliminarDatoCache(sIdAfiliado+"_1");
+//		Thread.sleep(5000);
 		
 		if(DataAccess.validarContinuidadEjecucion()) {
 			System.out.println("TERMINAN VALIDACIONES DE ER. SALTA SIGUIENTE ESCENARIO....");
@@ -405,9 +384,7 @@ public class AutoEngine {
 			throws SQLException, SessionNotFound, InterruptedException, IOException, FieldNotFound {
 
 		BasicFunctions.setIdCase(BasicFunctions.getIdCase()+1);
-//		int sec = BasicFunctions.getIdCase();
-//		sec = sec + 1;
-//		System.out.println("********* " + sec);
+
 		String query = "SELECT * FROM aut_fix_tcr_datos" + " WHERE ID_CASE= " + BasicFunctions.getIdCase()
 				+ " ORDER BY ID_CASESEQ ASC LIMIT 1;";
 	
@@ -418,7 +395,7 @@ public class AutoEngine {
 			int idCaseSeq = resultset.getInt("ID_CASESEQ");
 			
 			//El idCaseSeq se reduce en 1 porque al entrar al ejecutarSiguientePaso vuelve a incrementarlo
-			BasicFunctions.setIdCaseSeq(idCaseSeq-1);
+			BasicFunctions.setIdCaseSeq(idCaseSeq);
 			ejecutarSiguientePaso();
 		}
 	}
