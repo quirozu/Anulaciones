@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import co.bvc.com.basicfix.BasicFunctions;
 import co.bvc.com.basicfix.Constantes;
-import co.bvc.com.basicfix.DataAccess;
 import co.bvc.com.dao.domain.RespuestaConstrucccionMsgFIX;
 import quickfix.FieldNotFound;
 import quickfix.field.BeginString;

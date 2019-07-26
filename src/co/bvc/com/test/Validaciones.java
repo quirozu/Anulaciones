@@ -70,36 +70,39 @@ public class Validaciones {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			
-			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
-			
+			String valueMSG = message.isSetField(key) ? message.getString(key) : null;			
 			String nomEtiqueta = getNameTag(key);
+			String descValidacion = "";
 			
-			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
+//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
 			
 			//Se compara si ninguno tiene valores nulos
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					msgBuenos("AR-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AR", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+					DataAccess.cargarLogsExitosos(descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AR", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					msgBuenos("AR-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AR", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgBuenos("AR-"+nomEtiqueta, key, valueDB);
+					DataAccess.cargarLogsExitosos(descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AR", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				}
 			}
-			
+			System.out.println(descValidacion);
 		}
 		
 		if(message.isSetField(58)) {
@@ -127,6 +130,8 @@ public class Validaciones {
 		
 		String idAfiliado = message.getHeader().getString(TargetCompID.FIELD); //56
 		
+		System.out.println("AFILIADO: " + idAfiliado + ", INICIADOR: " + BasicFunctions.getIniciator()+ ", RECEPTOR: " + BasicFunctions.getReceptor());
+		
 		String queryMessageAE = "SELECT * FROM aut_fix_tcr_datos WHERE ID_CASE = " + datosCache.getIdCase();
 		
 		if(idAfiliado.equals(BasicFunctions.getIniciator())) {
@@ -147,22 +152,22 @@ public class Validaciones {
 			idEscenario = resultset.getString("ID_ESCENARIO");
 			mercado = resultset.getString("MERCADO"); 
 			
-			mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
+			//mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
 			
-			if(idAfiliado.equals(BasicFunctions.getIniciator())) {
-				mapaDB.put(571, BasicFunctions.getIdEjecution()+"1_AE");
-			}
+//			if(idAfiliado.equals(BasicFunctions.getIniciator())) {
+//				mapaDB.put(571, BasicFunctions.getIdEjecution() + "" + BasicFunctions.getIdCaseSeq() + "_AE");
+//			}
 			
 			if(datosCache.getIdSecuencia() == 1) {
 				mapaDB.put(487, "0");
 				mapaDB.put(856, resultset.getString("AE_RECTREPTYPE1"));
-				mapaDB.put(828, Integer.toString(resultset.getInt("AE_TRDTYPE")));
-				mapaDB.put(150, resultset.getString("AE_EXECTYPE"));
+//				mapaDB.put(828, Integer.toString(resultset.getInt("AE_TRDTYPE")));// No vienen en ningún AE
+//				mapaDB.put(150, resultset.getString("AE_EXECTYPE"));  // No vienen en ningún AE
 				mapaDB.put(572, resultset.getString("AE_TRAREPREFID"));
 				mapaDB.put(20102, resultset.getString("AE_DIRTYPRICE"));
-				mapaDB.put(62, resultset.getString("AE_VALIDUNTILTIME"));			
+//				mapaDB.put(62, resultset.getString("AE_VALIDUNTILTIME"));	// No vienen en ningún AE		
 			} else {
-				mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
+				mapaDB.put(487, "2");
 				mapaDB.put(856, resultset.getString("AE_RECTREPTYPE2"));
 				
 				if(mercado.equals("RFFON") || mercado.equals("RVFON")) {
@@ -187,10 +192,10 @@ public class Validaciones {
 			mapaDB.put(573, resultset.getString("AE_MATCHSTATUS"));
 			mapaDB.put(15, resultset.getString("AE_CURRENCY"));
 
-			SimpleDateFormat SDF = new SimpleDateFormat("yyyMMdd");
+			SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
 //			long id_ejecution = Long.parseLong(SDF.format(new Date()));
-			String strSettDate = SDF.format(resultset.getString("AE_SETTDATE"));
-			String strTradeDate = SDF.format(resultset.getString("AE_SETTDATE"));
+			String strSettDate = SDF.format(resultset.getDate("AE_SETTDATE")).toString();
+			String strTradeDate = SDF.format(resultset.getDate("AE_SETTDATE")).toString();
 			
 //			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
 //			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
@@ -220,6 +225,7 @@ public class Validaciones {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			String valueMSG = null;
+			String descValidacion = "";
 			
 			//Si la clave se encuentra dentro del gupo NoSides
 			if(key==54 || key == 1 || key == 453 || key == 921 || key == 922) {
@@ -235,71 +241,38 @@ public class Validaciones {
 			
 			String nomEtiqueta = getNameTag(key);
 			
-			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
+//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
 			
 			//Se compara si ninguno tiene valores nulos
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AE", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AE", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AE", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("AE", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 			}
+			System.out.println(descValidacion);
 		}
 			
-		
-		
-//		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
-//			Integer key = entry.getKey();
-//			String valueDB = entry.getValue();
-//			
-//			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
-//			
-//			String nomEtiqueta = getNameTag(key);
-//			
-////			System.out.println(key + " => DB: " + valueDB + " MG: " + valueMSG);
-//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
-//			
-//			//Se compara si ninguno tiene valores nulos
-//			if(valueDB != null && valueMSG != null) {
-//				if(valueDB.equals(valueMSG)) {
-//					contadorBuenos++;
-//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
-//					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
-//				} else {
-//					contadorMalos++;
-//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
-//					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
-//				}
-//				
-//			} else {
-//				if (valueDB == null && valueMSG == null) {
-//					contadorBuenos++;
-//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
-//					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
-//				} else {
-//					contadorMalos++;
-//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
-//					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
-//				}
-//			}
-//		}
-		
 		System.out.println("----------------------------------------");
 		System.out.println("---------------------");
 		System.out.println("-- VALIDACIONES AE --");
@@ -340,20 +313,32 @@ public class Validaciones {
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
 			idEscenario = resultset.getString("ID_ESCENARIO");
 			
-			mapaDB.put(37, resultset.getString("AE_TRMATCHID")); // Deberías ser AE_ORDERID que no está en DB.
+//			mapaDB.put(37, resultset.getString("AE_ORDERID")); // Falta incluir campo en DB.
 			mapaDB.put(150, resultset.getString("ER_EXECTYPE"));
 			mapaDB.put(55, resultset.getString("AE_SYMBOL"));
 			mapaDB.put(762, resultset.getString("AE_SECSUBTYPE"));
-			mapaDB.put(48, resultset.getString("AE_SECID"));
-			mapaDB.put(22, resultset.getString("AE_SECIDSOURCE"));
+//			mapaDB.put(48, resultset.getString("AE_SECID")); //Indicado como no aplica
+//			mapaDB.put(22, resultset.getString("AE_SECIDSOURCE")); //Indicado como no aplica
 			mapaDB.put(31, resultset.getString("AE_LASTPX"));
 			mapaDB.put(32, resultset.getString("AE_LASTQTY"));
 			mapaDB.put(54, resultset.getString("AE_SIDE"));
-			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
-			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
+
+			SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
+//			long id_ejecution = Long.parseLong(SDF.format(new Date()));
+			String strSettDate = SDF.format(resultset.getDate("AE_SETTDATE")).toString();
+			String strTradeDate = SDF.format(resultset.getDate("AE_SETTDATE")).toString();
+			
+//			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
+//			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
+			mapaDB.put(64, strSettDate);
+			mapaDB.put(75, strTradeDate);
+
+			
+//			mapaDB.put(75, resultset.getString("AE_TRADEDATE"));
+//			mapaDB.put(64, resultset.getString("AE_SETTDATE"));
 			mapaDB.put(381, resultset.getString("AE_GROSSTRADEAMT"));
 			mapaDB.put(880, resultset.getString("AE_TRMATCHID"));
-			mapaDB.put(1057, resultset.getString("ER_AGGRESSORIND"));
+//			mapaDB.put(1057, resultset.getString("ER_AGGRESSORIND")); // No está presente en los mensajes obtenidos
 			
 			if(resultset.getString("MERCADO").equals("DV")) {
 				mapaDB.put(1, resultset.getString("AE_ACCOUNT"));
@@ -375,7 +360,7 @@ public class Validaciones {
 			}
 
 //			mapaDB.put(17, resultset.getString("AE_EXECID"));
-			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));  //Falla porque el motor lo genera.
+//			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));  //Falla porque el motor lo genera.
 			
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
@@ -384,38 +369,42 @@ public class Validaciones {
 		}
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
-			String valueDB = entry.getValue();
-			
+			String valueDB = entry.getValue();			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null;
 			
 			String nomEtiqueta = getNameTag(key);
+			String descValidacion = "";
 			
-			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
+//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
 			
 			//Se compara si ninguno tiene valores nulos
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("ER", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
+					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("ER", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
-					DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("ER", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
+					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
-					DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, valueMSG, valueDB, idEscenario, String.valueOf(idCase), idSecuencia);
+					descValidacion = msgComparacion("ER", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+//					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
+					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 			}
-			
+			System.out.println(descValidacion);
 		}
 		
 	//		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
@@ -488,22 +477,27 @@ public class Validaciones {
 	
 	}
 
-	public void msgBuenos(String nomTag, int keyTag, String valueDb) {
-		System.out.println("IGUALES: " + nomTag + "(" + keyTag + "): " + valueDb);
+	public void msgBuenos(String tipoMsg, String nomTag, int keyTag, String valueDb) {
+		System.out.println(tipoMsg+ " - IGUALES: " + nomTag + "(" + keyTag + "): " + valueDb);
 	}
 	
 	public void msgMalos(String nomTag, int keyTag, String valueDb, String valueMsg) {
 		System.out.println("DIFERENTES: " + nomTag + "(" + keyTag + ") => DB:" + valueDb + ", MSG:" + valueMsg);
 	}
 
+	public String msgComparacion(String msgType, String obs, String nomTag, int keyTag, String valueDb, String valueMsg) {
+		return  msgType + " - " + obs + ": "+ nomTag + "(" + keyTag + ") "
+				+ "=> VALOR_MENSAJE_FIX:" + valueMsg + " - VALOR_BASE_DATOS:" + valueDb;
+	}
+
 	public String getNameTag(int tag) throws ConfigError {
 		
 		dictionary = new DataDictionary("resources\\datadictionary\\FIX44.xml");
 		String nameTag = "";
-	
-		if (dictionary.hasFieldValue(tag)) {
+		
+//		if (dictionary.hasFieldValue(tag)) {
 			nameTag = dictionary.getFieldName(tag);
-		}
+//		}
 		return nameTag;
 	}
 }
