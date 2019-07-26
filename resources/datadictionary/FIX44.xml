@@ -378,7 +378,7 @@
       <field name="QuoteRequestRejectReason" required="Y"/>
 	    <group name="NoRelatedSym" required="Y">
 			<component name="Instrument" required="Y"/>
-			<field name="OrderQty" required="N"/>
+			<field name="OrderQty" required="Y"/>
 		</group>
 	  <field name="Text" required="N"/>
     </message>
@@ -6883,8 +6883,7 @@
       <value enum="1" description="30_360"/>
       <value enum="2" description="NL365"/>
     </field>
-	<field number="21012" name="DirtyPrice" type="PRICE"/>
-	<!-- Falta 21012 -->
+	<field number="20102" name="DirtyPrice" type="PRICE"/>
 
   </fields>
 </fix>

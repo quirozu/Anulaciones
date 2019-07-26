@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,14 +28,20 @@ import quickfix.DataDictionary;
 import quickfix.FieldNotFound;
 import quickfix.Group;
 import quickfix.Message;
+import quickfix.field.NoPartyIDs;
+import quickfix.field.PartyID;
+import quickfix.field.PartyIDSource;
+import quickfix.field.PartyRole;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
+import quickfix.fix44.TradeCaptureReport;
 
 public class Validaciones {
 
 	private static Connection conn = null;
 	DataDictionary dictionary = null;
 	DataAccess data = new DataAccess();
+	String descValidacion = "";
 	
 	public void validarAR(AutFixRfqDatosCache datosCache, Message message) throws SQLException, FieldNotFound, ConfigError {
 		int contadorBuenos = 0;
@@ -72,7 +79,7 @@ public class Validaciones {
 			
 			String valueMSG = message.isSetField(key) ? message.getString(key) : null;			
 			String nomEtiqueta = getNameTag(key);
-			String descValidacion = "";
+//			String descValidacion = "";
 			
 //			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + valueMSG);
 			
@@ -80,11 +87,11 @@ public class Validaciones {
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("AR", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+					descValidacion = msgComparacion("AR", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsExitosos(descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("AR", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+					descValidacion = msgComparacion("AR", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 //					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				}
@@ -92,12 +99,12 @@ public class Validaciones {
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("AR", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
+					descValidacion = msgComparacion("AR", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 //					msgBuenos("AR-"+nomEtiqueta, key, valueDB);
 					DataAccess.cargarLogsExitosos(descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("AR", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
+					descValidacion = msgComparacion("AR", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 //					msgMalos("AR-"+nomEtiqueta,key,valueDB,valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, id_Escenario, String.valueOf(idCase), idSecuencia);
 				}
@@ -127,7 +134,7 @@ public class Validaciones {
 		int idSecuencia = 0;
 		String idEscenario = "";
 		String mercado = "DEFAULT";
-		
+		String partyIdSrc = null;
 		String idAfiliado = message.getHeader().getString(TargetCompID.FIELD); //56
 		
 		System.out.println("AFILIADO: " + idAfiliado + ", INICIADOR: " + BasicFunctions.getIniciator()+ ", RECEPTOR: " + BasicFunctions.getReceptor());
@@ -150,7 +157,8 @@ public class Validaciones {
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
 			idEscenario = resultset.getString("ID_ESCENARIO");
-			mercado = resultset.getString("MERCADO"); 
+			mercado = resultset.getString("MERCADO");
+			partyIdSrc = resultset.getString("AE_PARTYIDSOURCE");
 			
 			//mapaDB.put(487, resultset.getString("AE_TRADTRANTYPE"));
 			
@@ -211,8 +219,6 @@ public class Validaciones {
 //			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));	
 			mapaDB.put(552, resultset.getString("AE_NOSIDES"));
 			
-//			mapaDB.put(54, Integer.toString(resultset.getInt("AE_SIDE")));
-//			mapaDB.put(54, Integer.toString(3-resultset.getInt("AE_SIDE"))); //3-2=1  3-1=2
 			mapaDB.put(54, resultset.getString("AE_SIDE"));
 //			mapaDB.put(453, resultset.getString("AE_NOPARTYID"));
 			//AQUI VAN LOS PARTYIES.
@@ -221,17 +227,15 @@ public class Validaciones {
 			
 		}
 		
+		//Se comparan los componentes pertenecientes al grupo NoSides		
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
 			String valueDB = entry.getValue();
 			String valueMSG = null;
-			String descValidacion = "";
 			
 			//Si la clave se encuentra dentro del gupo NoSides
 			if(key==54 || key == 1 || key == 453 || key == 921 || key == 922) {
 				
-//				String valueMSG = message.isSetField(key) ? message.getString(key) : null;
-
 				List<Group> groupNoSides = message.getGroups(552);
 									
 				for(Group grupo:groupNoSides) {
@@ -247,28 +251,112 @@ public class Validaciones {
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("AE", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					descValidacion = msgComparacion("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("AE", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					descValidacion = msgComparacion("AE", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("AE", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgBuenos("AE-"+nomEtiqueta, key, valueDB);
+					descValidacion = msgComparacion("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("AE", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgMalos("AE-"+nomEtiqueta,key,valueDB,valueMSG);
+					descValidacion = msgComparacion("AE", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
+			}
+			System.out.println(descValidacion);
+		}
+		
+		//Para validar los party se obtienen Firma, Trader y Usuario esperado
+		String queryDataParty = "SELECT NOM_USUARIO, ID_AFILIADO, USUARIO " + 
+				" FROM AUT_USUARIO WHERE ID_APP = 3 and PERFIL_USUARIO = 'FIXCONNECTOR' AND ESTADO = 'A' AND ID_AFILIADO = '" +
+				idAfiliado + "';";
+		
+		ResultSet dataParty = DataAccess.getQuery(queryDataParty);
+		String exeFirm = null, exeTrader = null, enterTrader = null;
+		
+		while(dataParty.next()) {
+			exeFirm = dataParty.getString("ID_AFILIADO");
+			exeTrader = dataParty.getString("NOM_USUARIO");
+			enterTrader = dataParty.getString("USUARIO");
+		}
+		
+		//SE COMPARAN LOS VALORES EN LOS GRUPOS REPETITIVOS DE FIRMAS (453)
+		//Primero se obtiene el grupo NoSides que contiene a NoPartyID
+		TradeCaptureReport.NoSides sidesGroup = new TradeCaptureReport.NoSides();
+
+		// get first sidesGroup
+		message.getGroup(1, sidesGroup);
+		
+		//Y del grupo se obtienen los grupos 453 (Partes)
+		List<Group> groupsParty = sidesGroup.getGroups(453);
+
+		for(Group firma:groupsParty) {
+
+			int partyRoleMsg = firma.getInt(PartyRole.FIELD); //452
+			String partyIdMsg = firma.getString(PartyID.FIELD); // 448
+			String partyIDSourceMsg = firma.getString(PartyIDSource.FIELD); //447
+			
+//			System.out.println(firma.toString());
+			
+			switch (partyRoleMsg) {
+				case 1: 
+					if(partyIdMsg.equals(exeFirm)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("AE", "EXITOSO", "PartyIDSource", 448 , exeFirm, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("AE", "FALLIDO", "PartyIDSource", 448 , exeFirm, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					//System.out.println(descValidacion);
+					break;
+				
+				case 12: 
+					if(partyIdMsg.equals(exeTrader)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("AE", "EXITOSO", "PartyIDSource", 448 , exeTrader, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("AE", "FALLIDO", "PartyIDSource", 448 , exeTrader, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				
+				case 36: 
+					if(partyIdMsg.equals(enterTrader)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("AE", "EXITOSO", "PartyIDSource", 448 , enterTrader, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("AE", "FALLIDO", "PartyIDSource", 448 , enterTrader, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				default:
+					System.out.println("VALOR DE PARTY NO ESPERADO: PartyIDRole: " + partyRoleMsg + " - partyIdMsg: "+ partyIdMsg);
+					break;
+			}
+			System.out.println(descValidacion);
+		
+			//Se compara el valor de la etiqueta 447 (PartyIDSource) de cada grupo encontrado
+			if(partyIDSourceMsg != null && partyIdSrc != null && partyIDSourceMsg.equals(partyIdSrc)) {
+				contadorBuenos++;
+				descValidacion = msgComparacion("AE", "EXITOSO", "PartyIDSource", 447, partyIdSrc, partyIDSourceMsg);
+				DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+			} else {
+				contadorMalos++;
+				descValidacion = msgComparacion("AE", "FALLIDO", "PartyIDSource", 447, partyIdSrc, partyIDSourceMsg);
+				DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 			}
 			System.out.println(descValidacion);
 		}
@@ -381,54 +469,28 @@ public class Validaciones {
 			if(valueDB != null && valueMSG != null) {
 				if(valueDB.equals(valueMSG)) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("ER", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
+					descValidacion = msgComparacion("ER", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("ER", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
+					descValidacion = msgComparacion("ER", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 				
 			} else {
 				if (valueDB == null && valueMSG == null) {
 					contadorBuenos++;
-					descValidacion = msgComparacion("ER", "IGUALES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgBuenos("ER-"+nomEtiqueta, key, valueDB);
+					descValidacion = msgComparacion("ER", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				} else {
 					contadorMalos++;
-					descValidacion = msgComparacion("ER", "DIFERENTES", nomEtiqueta, key, valueDB, valueMSG);
-//					msgMalos("ER-"+nomEtiqueta,key,valueDB,valueMSG);
+					descValidacion = msgComparacion("ER", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
 			}
 			System.out.println(descValidacion);
 		}
 		
-	//		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
-	//			Integer key = entry.getKey();
-	//			String valueDB = entry.getValue();
-	//			
-	//			String nomEtiqueta =  getNameTag(key); //"NombreEtiqueta"; //falta implementar contra LIBRERIA FIX4.4.xml
-	//			System.out.println(nomEtiqueta + "(" + key + ") => DB: " + valueDB + " MG: " + message.getString(key));
-	//			
-	////			System.out.println(key + " => DB: " + valueDB + " MG: " + message.getString(key));
-	//			
-	//			if(valueDB != null && valueDB.equals(message.getString(key))) {
-	//				contadorBuenos++;
-	//				msgBuenos(nomEtiqueta, key, valueDB);
-	//
-	//				DataAccess.cargarLogsExitosos(nomEtiqueta, key, valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
-	//				
-	//			} else {
-	//				contadorMalos++;
-	//				DataAccess.cargarLogsFallidos(message, nomEtiqueta, key, message.getString(key), valueDB, id_Escenario, String.valueOf(idCase), idSecuencia);
-	//			}
-	//			
-	//		}
-			
 			System.out.println("----------------------------------------");
 			System.out.println("---------------------");
 			System.out.println("-- VALIDACIONES ER --");
@@ -486,8 +548,8 @@ public class Validaciones {
 	}
 
 	public String msgComparacion(String msgType, String obs, String nomTag, int keyTag, String valueDb, String valueMsg) {
-		return  msgType + " - " + obs + ": "+ nomTag + "(" + keyTag + ") "
-				+ "=> VALOR_MENSAJE_FIX:" + valueMsg + " - VALOR_BASE_DATOS:" + valueDb;
+		return  msgType + " - Validación del campo " + nomTag + "(" + keyTag + ") es " + obs 
+				+ "=> valor MENSAJE FIX: " + valueMsg + " - valor esperado (BD) :" + valueDb;
 	}
 
 	public String getNameTag(int tag) throws ConfigError {
