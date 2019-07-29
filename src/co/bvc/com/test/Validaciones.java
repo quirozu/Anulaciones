@@ -377,6 +377,7 @@ public class Validaciones {
 		int idCase = 0;
 		int idSecuencia = 0;
 		String idEscenario = "";
+		String partyIdSrc = null;
 		
 		String idAfiliado = message.getHeader().getString(TargetCompID.FIELD); //56
 		
@@ -400,6 +401,7 @@ public class Validaciones {
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
 			idEscenario = resultset.getString("ID_ESCENARIO");
+			partyIdSrc = resultset.getString("AE_PARTYIDSOURCE");
 			
 //			mapaDB.put(37, resultset.getString("AE_ORDERID")); // Falta incluir campo en DB.
 			mapaDB.put(150, resultset.getString("ER_EXECTYPE"));
@@ -487,6 +489,136 @@ public class Validaciones {
 					descValidacion = msgComparacion("ER", "FALLIDO", nomEtiqueta, key, valueDB, valueMSG);
 					DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 				}
+			}
+			System.out.println(descValidacion);
+		}
+		
+		//Para validar los party se obtienen Firma, Trader y Usuario esperado
+		String queryDataParty = "SELECT NOM_USUARIO, ID_AFILIADO, USUARIO " + 
+				" FROM AUT_USUARIO WHERE ID_APP = 3 and PERFIL_USUARIO = 'FIXCONNECTOR' AND ESTADO = 'A' AND ID_AFILIADO = '" +
+				idAfiliado + "';";
+		
+		ResultSet dataParty = DataAccess.getQuery(queryDataParty);
+		String exeFirm = null, exeTrader = null, enterTrader = null;
+		
+		while(dataParty.next()) {
+			exeFirm = dataParty.getString("ID_AFILIADO");
+			exeTrader = dataParty.getString("NOM_USUARIO");
+			enterTrader = dataParty.getString("USUARIO");
+		}
+		
+		//Para la contraparte
+		String queryDataContraParty = "SELECT NOM_USUARIO, ID_AFILIADO, USUARIO " + 
+				" FROM AUT_USUARIO WHERE ID_APP = 3 and PERFIL_USUARIO = 'FIXCONNECTOR' AND ESTADO = 'A' ";
+		if(idAfiliado.equals(BasicFunctions.getIniciator())) {
+			queryDataContraParty += " AND ID_AFILIADO = " + BasicFunctions.getReceptor(); 
+			
+		} else {
+			queryDataContraParty += " AND ID_AFILIADO = " + BasicFunctions.getIniciator();
+		}
+		
+		System.out.println("AFILIADO: "+idAfiliado+" CONSULTA CONTRAPARTE: "+queryDataContraParty);
+		
+		ResultSet dataContraParty =  DataAccess.getQuery(queryDataContraParty);
+		String contraFirm = null, contraTrader = null;
+		
+		while(dataContraParty.next()) {
+			contraFirm = dataContraParty.getString("ID_AFILIADO");
+			contraTrader = dataContraParty.getString("NOM_USUARIO");
+		}
+		
+		//SE COMPARAN LOS VALORES EN LOS GRUPOS REPETITIVOS DE FIRMAS (453)
+		List<Group> groupsParty = message.getGroups(NoPartyIDs.FIELD);
+
+		for(Group firma:groupsParty) {
+			
+			Iterator<Integer> it = firma.groupKeyIterator();
+			while (it.hasNext()) {
+				Integer key = it.next();
+				Integer firm = firma.getFieldTag();
+				System.out.println("Clave: " + key + " -> Valor: " + firm);
+			}
+			
+			int partyRoleMsg = firma.isSetField(452) ? firma.getInt(PartyRole.FIELD):0; //452
+			String partyIdMsg = firma.isSetField(448) ? firma.getString(PartyID.FIELD):""; // 448
+			String partyIDSourceMsg = firma.isSetField(447) ? firma.getString(PartyIDSource.FIELD):"c"; //447
+			
+			switch (partyRoleMsg) {
+				case 1: 
+					if(partyIdMsg.equals(exeFirm)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("ER", "EXITOSO", "PartyIDSource", 448 , exeFirm, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("ER", "FALLIDO", "PartyIDSource", 448 , exeFirm, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					//System.out.println(descValidacion);
+					break;
+				
+				case 12: 
+					if(partyIdMsg.equals(exeTrader)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("ER", "EXITOSO", "PartyIDSource", 448 , exeTrader, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("ER", "FALLIDO", "PartyIDSource", 448 , exeTrader, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				
+				case 17: 
+					if(partyIdMsg.equals(contraFirm)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("ER", "EXITOSO", "PartyIDSource", 448 , contraFirm, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("ER", "FALLIDO", "PartyIDSource", 448 , contraFirm, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				
+				case 36: 
+					if(partyIdMsg.equals(enterTrader)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("ER", "EXITOSO", "PartyIDSource", 448 , enterTrader, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("ER", "FALLIDO", "PartyIDSource", 448 , enterTrader, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				case 37: 
+					if(partyIdMsg.equals(contraTrader)) {
+						contadorBuenos++;  //("AE", "EXITOSO", nomEtiqueta, key, valueDB, valueMSG);
+						descValidacion = msgComparacion("ER", "EXITOSO", "PartyIDSource", 448 , contraTrader, partyIdMsg);
+						DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					} else {
+						contadorMalos++;
+						descValidacion = msgComparacion("ER", "FALLIDO", "PartyIDSource", 448 , contraTrader, partyIdMsg);
+						DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+					}
+					break;
+				
+				default:
+					System.out.println("VALOR DE PARTY NO ESPERADO: PartyIDRole: " + partyRoleMsg + " - partyIdMsg: "+ partyIdMsg);
+					break;
+			}
+			System.out.println(descValidacion);
+		
+			//Se compara el valor de la etiqueta 447 (PartyIDSource) de cada grupo encontrado
+			if(partyIDSourceMsg != null && partyIdSrc != null && partyIDSourceMsg.equals(partyIdSrc)) {
+				contadorBuenos++;
+				descValidacion = msgComparacion("AE", "EXITOSO", "PartyIDSource", 447, partyIdSrc, partyIDSourceMsg);
+				DataAccess.cargarLogsExitosos(descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
+			} else {
+				contadorMalos++;
+				descValidacion = msgComparacion("AE", "FALLIDO", "PartyIDSource", 447, partyIdSrc, partyIDSourceMsg);
+				DataAccess.cargarLogsFallidos(message, descValidacion, idEscenario, String.valueOf(idCase), idSecuencia);
 			}
 			System.out.println(descValidacion);
 		}
