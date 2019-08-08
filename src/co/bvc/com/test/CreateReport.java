@@ -27,7 +27,6 @@ public class CreateReport {
 		try {
 			rs = conexiona.getQuery(query);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		rs.next();
@@ -39,10 +38,10 @@ public class CreateReport {
 		FileWriter pw = new FileWriter(System.getProperty("user.dir") + "/Reporte iteracion " + num + " Fecha "
 				+ formatter.format(date) + ".csv");
 		String casoActual = "";
-		double totalExitososCaso = 0;
+//		double totalExitososCaso = 0;
+//		double totalFallidosCaso = 0;
 		double	 fallido = 0;
 		double exitoso = 0;
-		double totalFallidosCaso = 0;
 		double totalExitosos = 0;
 		double totalFallidos = 0;
 		double porcentaje = 0;
@@ -86,7 +85,7 @@ public class CreateReport {
 		casoActual = rs.getString("COD_CASO");
 		if (rs.getString("ESTADO_EJECUCION").equals("EXITOSO")) {
 			totalExitosos++;
-			totalExitososCaso++;
+//			totalExitososCaso++;
 		} else {
 			pw.append(",");
 			pw.append(rs.getString("MENSAJE"));
@@ -95,7 +94,7 @@ public class CreateReport {
 			pw.append(",");
 			pw.append(rs.getString("DESC_ERROR"));
 			totalFallidos++;
-			totalFallidosCaso++;
+//			totalFallidosCaso++;
 		}
 		pw.append("\r\n");
 
@@ -147,7 +146,7 @@ public class CreateReport {
 			casoActual = rs.getString("COD_CASO");
 			if (rs.getString("ESTADO_EJECUCION").equals("EXITOSO")) {
 				totalExitosos++;
-				totalExitososCaso++;
+//				totalExitososCaso++;
 			} else {
 				pw.append(",");
 				pw.append(rs.getString("MENSAJE"));
@@ -156,7 +155,7 @@ public class CreateReport {
 				pw.append(",");
 				pw.append(rs.getString("DESC_ERROR"));
 				totalFallidos++;
-				totalFallidosCaso++;
+//				totalFallidosCaso++;
 			}
 			pw.append("\r\n");
 		}
