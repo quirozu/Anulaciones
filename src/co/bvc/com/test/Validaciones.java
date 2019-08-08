@@ -449,13 +449,10 @@ public class Validaciones {
 				mapaDB.put(922, resultset.getString("AE_ENDCASH"));
 			}
 
-//			mapaDB.put(17, resultset.getString("AE_EXECID"));
-//			mapaDB.put(60, resultset.getString("AE_TRANSTIME"));  //Falla porque el motor lo genera.
-			
 			idCase = resultset.getInt("ID_CASE");
 			idSecuencia = resultset.getInt("ID_SECUENCIA");
-			idEscenario = "FIX_8";
 //			idEscenario = resultset.getString("ID_ESCENARIO");
+			idEscenario = "FIX_8";
 		}
 		for(Map.Entry<Integer,String> entry : mapaDB.entrySet()) {
 			Integer key = entry.getKey();
